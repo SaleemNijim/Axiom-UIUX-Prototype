@@ -1,0 +1,1240 @@
+# Axiom — UI/UX DESIGN PROTOTYPE ONLY
+
+You are a senior product designer and frontend UI engineer specializing in premium SaaS products.
+
+Your task is **NOT to build the Axiom application**.
+
+Your task is to create a **complete visual UI/UX prototype** that shows exactly what the Axiom product should look like.
+
+The attached project documents are the source of truth.
+
+READ THE ATTACHED DOCUMENTS FIRST.
+
+Do not invent product functionality that is not supported by the documents.
+
+---
+
+# 1. WHAT YOU ARE BUILDING
+
+Build a high-fidelity **UI/UX concept prototype** for:
+
+**Axiom**
+
+An AI-powered academic exam-question generation platform for university instructors.
+
+The main product journey is:
+
+Instructor
+→ Dashboard
+→ Course
+→ Course Materials
+→ Style Profile
+→ Generate Exam
+→ AI Generation Progress
+→ Review Questions
+→ Edit / Approve / Reject
+→ Export Exam
+
+The final result should allow someone to open the HTML file and visually understand the entire product.
+
+This is a **design prototype**, not a real application.
+
+---
+
+# 2. EXTREMELY IMPORTANT — FINAL OUTPUT
+
+The final deliverable must be:
+
+```text
+index.html
+```
+
+ONLY.
+
+Do not create a full application repository.
+
+Do not create:
+
+* backend
+* database
+* API
+* authentication implementation
+* Supabase implementation
+* AI integration
+* payment integration
+* file processing
+* real document parsing
+* real exam generation
+* real export
+* business logic
+* application services
+* API routes
+* server code
+
+Do not create separate:
+
+* `.js`
+* `.jsx`
+* `.tsx`
+* `.css`
+* `.scss`
+* component files
+* backend files
+
+Everything must be contained inside:
+
+```text
+index.html
+```
+
+---
+
+# 3. THIS IS A VISUAL PROTOTYPE
+
+The purpose is to answer:
+
+**"How should Axiom look and feel?"**
+
+It is NOT intended to answer:
+
+**"How does Axiom technically work?"**
+
+Therefore:
+
+Use realistic mock data.
+
+Use simulated states.
+
+Use visual representations.
+
+Use placeholder interactions only when necessary to demonstrate the design.
+
+The UI should communicate the product without implementing the underlying system.
+
+---
+
+# 4. NO BUSINESS LOGIC
+
+Do not implement:
+
+* real authentication
+* real users
+* real organizations
+* real subscriptions
+* real quotas
+* real AI calls
+* real embeddings
+* real RAG
+* real file uploads
+* real virus scanning
+* real document processing
+* real database operations
+* real API requests
+* real payments
+* real export generation
+
+These concepts may be visually represented, but they must remain mock/static.
+
+For example:
+
+Show:
+
+"جاري تحليل الملف..."
+
+with a visual progress state.
+
+Do NOT actually implement document processing.
+
+Show:
+
+"Citation Confidence: 94%"
+
+as visual mock data.
+
+Do NOT calculate it.
+
+---
+
+# 5. JAVASCRIPT / INTERACTION CONSTRAINT
+
+Do not build application logic.
+
+Do not create business functions.
+
+Do not create API handlers.
+
+Do not create data-processing functions.
+
+Do not create backend logic.
+
+The prototype should primarily be HTML + CSS.
+
+Simple visual navigation is acceptable only if needed to demonstrate the screens.
+
+Prefer:
+
+* anchor navigation
+* CSS states
+* static mock states
+* simple visual transitions
+
+Do not turn the prototype into a real React application.
+
+---
+
+# 6. REACT BITS
+
+React Bits is an important visual reference for this design.
+
+Use React Bits concepts/components as inspiration for:
+
+* subtle animated backgrounds
+* spotlight effects
+* animated cards
+* elegant hover interactions
+* text reveal
+* subtle motion
+* modern borders
+* gradients
+* bento layouts
+* visual depth
+* polished micro-interactions
+
+However:
+
+The final deliverable is still ONLY:
+
+```text
+index.html
+```
+
+If using an actual React Bits component would require a full React application or multiple source files, do NOT create that architecture.
+
+Instead:
+
+Reproduce the visual result of the React Bits component using self-contained HTML/CSS inside `index.html`.
+
+The final result should visually feel inspired by React Bits without turning the project into a React application.
+
+---
+
+# 7. DESIGN PHILOSOPHY
+
+Axiom should look like a serious academic SaaS product.
+
+The visual direction should combine:
+
+* Linear
+* Vercel
+* Notion
+* modern AI SaaS
+* enterprise software
+* academic technology
+
+But do NOT copy any of them.
+
+Axiom should feel like its own product.
+
+The desired impression:
+
+**Professional**
+**Intelligent**
+**Trustworthy**
+**Academic**
+**Minimal**
+**Premium**
+
+Avoid anything that makes it look like:
+
+* a crypto application
+* a gaming dashboard
+* a generic AI chatbot
+* a startup template
+* an "AI agents" control center
+* an overly futuristic sci-fi interface
+
+---
+
+# 8. BRAND
+
+Use the existing Axiom visual identity from the project documents.
+
+Primary colors:
+
+```text
+Navy:    #1F3864
+Blue:    #2E75B6
+```
+
+Use:
+
+* white
+* cool light gray
+* slate
+* muted blue
+* restrained green
+* restrained amber
+* restrained red
+
+The application should NOT be overwhelmingly blue.
+
+Blue is an accent and identity color.
+
+---
+
+# 9. TYPOGRAPHY
+
+The UI is primarily Arabic RTL.
+
+Design the interface natively for:
+
+```text
+direction: rtl;
+```
+
+Arabic should look natural.
+
+Use a modern Arabic-friendly web font from a CDN if required.
+
+English technical terms may appear naturally where appropriate:
+
+* AI
+* RAG
+* Style Profile
+* Citation Confidence
+* Question Bank
+* Export
+* Usage
+* Version
+
+Do not make the product look like an English application translated into Arabic.
+
+---
+
+# 10. GLOBAL APP SHELL
+
+Create the main application shell.
+
+Desktop:
+
+Right sidebar
++
+Top header
++
+Main content area
+
+Because the UI is RTL.
+
+Sidebar navigation:
+
+### الرئيسية
+
+Dashboard
+
+### المساقات
+
+Courses
+
+### الامتحانات
+
+Exams
+
+### بنك الأسئلة
+
+Question Bank
+
+### ذكاء الأستاذ
+
+Style Profile
+
+### الاستخدام
+
+Usage
+
+### الإعدادات
+
+Settings
+
+Bottom of sidebar:
+
+Instructor avatar
+
+د. سلمى أحمد
+
+كلية الطب — الجامعة
+
+Personal Plan
+
+Usage indicator
+
+---
+
+# 11. SCREEN 1 — DASHBOARD
+
+Create the main instructor dashboard.
+
+Header:
+
+```text
+مرحباً، د. سلمى
+```
+
+Subtitle:
+
+```text
+إليك نظرة سريعة على مساقاتك ونشاطك الأخير.
+```
+
+Create four metric cards:
+
+```text
+المساقات النشطة
+12
+
+الأسئلة المولدة
+143
+
+الأسئلة المعتمدة
+97
+
+الاستخدام هذا الشهر
+42 / 100
+```
+
+Then create:
+
+## Primary action card
+
+Title:
+
+```text
+ابدأ امتحانك القادم
+```
+
+Three visual stages:
+
+```text
+اختر المساق
+↓
+حدد المطلوب
+↓
+راجع الأسئلة
+```
+
+CTA:
+
+```text
+إنشاء امتحان
+```
+
+Then:
+
+### Recent Courses
+
+Cards:
+
+Anatomy I
+Pharmacology
+Medical Ethics
+Software Engineering
+
+Then:
+
+### Recent Activity
+
+Examples:
+
+* تم رفع Anatomy Lecture 04
+* تم إنشاء بصمة أسلوب جديدة
+* تم اعتماد 8 أسئلة
+* تم تصدير Midterm Exam
+
+Then an AI insight card:
+
+```text
+ملاحظة من Axiom
+
+تغطية الأسئلة للفصل الثالث أقل من المتوسط.
+```
+
+---
+
+# 12. SCREEN 2 — COURSES
+
+Create:
+
+```text
+المساقات
+```
+
+Subtitle:
+
+```text
+إدارة المواد والمحتوى العلمي لكل مساق.
+```
+
+Include:
+
+Search
+
+Filters
+
+* إنشاء مساق
+
+Show realistic course cards/table.
+
+Each course should include:
+
+* course name
+* department
+* number of materials
+* exams
+* style profile status
+* last update
+
+---
+
+# 13. SCREEN 3 — COURSE DETAILS
+
+Create a detailed course page.
+
+Example:
+
+```text
+Anatomy I
+```
+
+Metadata:
+
+```text
+السنة الثالثة
+الطب
+12 مادة
+Style Profile جاهزة
+```
+
+Tabs:
+
+```text
+نظرة عامة
+المواد
+الامتحانات
+بصمة الأسلوب
+بنك الأسئلة
+```
+
+Design this page carefully.
+
+It should feel like entering a workspace.
+
+---
+
+# 14. SCREEN 4 — MATERIALS
+
+Title:
+
+```text
+مواد المساق
+```
+
+Large upload area:
+
+```text
+اسحب الملفات إلى هنا
+
+أو
+
+رفع مادة
+```
+
+Show supported formats:
+
+PDF
+PPTX
+DOCX
+TXT
+
+Create realistic material cards.
+
+Example:
+
+```text
+Anatomy Lecture 03.pdf
+
+24 صفحة
+
+جاهز
+```
+
+Another:
+
+```text
+Cardiovascular System.pptx
+
+جاري المعالجة
+```
+
+Show subtle processing progress.
+
+---
+
+# 15. SCREEN 5 — MATERIAL PROCESSING
+
+Show a visual processing timeline.
+
+Example:
+
+```text
+✓ تم رفع الملف
+✓ تم فحص الملف
+✓ تم استخراج النص
+✓ تم تقسيم المحتوى
+● جاري إنشاء الفهرس
+○ جاهز للتوليد
+```
+
+This is only a visual state.
+
+Do not implement processing.
+
+Make the technical process understandable to a professor.
+
+---
+
+# 16. SCREEN 6 — STYLE PROFILE
+
+This screen is extremely important.
+
+Title:
+
+```text
+بصمة أسلوب الأستاذ
+```
+
+Show:
+
+```text
+الحالة
+جاهزة
+
+الإصدار
+v1.3
+
+العينات
+6 امتحانات سابقة
+```
+
+Create visual cards:
+
+### أسلوب الصياغة
+
+رسمي
+مباشر
+متوسط التفاصيل
+
+### مستوى التعقيد
+
+متوسط
+
+### أنواع الأسئلة
+
+اختيار من متعدد
+مقالي
+إجابة قصيرة
+
+### متوسط طول السؤال
+
+42 كلمة
+
+### بنية الأسئلة
+
+Use elegant visual indicators.
+
+Then:
+
+## Previous Versions
+
+v1.0
+v1.1
+v1.2
+v1.3
+
+Make versioning highly understandable.
+
+---
+
+# 17. SCREEN 7 — GENERATE EXAM
+
+Create the exam-generation configuration interface.
+
+Fields:
+
+### المساق
+
+Anatomy I
+
+### الفصل
+
+Chapter 03 — Cardiovascular System
+
+### أنواع الأسئلة
+
+Multiple Choice
+Essay
+Short Answer
+
+### العدد
+
+5 MCQ
+3 Essay
+
+### الصعوبة
+
+Easy
+Medium
+Hard
+
+### الخيارات
+
+Use Style Profile
+
+Require Citation
+
+Prevent Duplicate Questions
+
+Balance Difficulty
+
+Primary CTA:
+
+```text
+ابدأ التوليد
+```
+
+The design should make this process very easy.
+
+---
+
+# 18. SCREEN 8 — AI GENERATION
+
+Create a dedicated AI processing screen.
+
+Title:
+
+```text
+جاري بناء الامتحان
+```
+
+Show:
+
+```text
+Anatomy I
+Chapter 03
+8 Questions
+```
+
+Visual progress:
+
+```text
+✓ تجهيز المادة
+✓ استرجاع المقاطع المناسبة
+✓ تطبيق بصمة الأستاذ
+● توليد الأسئلة
+○ فحص الاستشهادات
+○ تجهيز المراجعة
+```
+
+Use subtle React Bits-inspired motion here.
+
+This should feel impressive but trustworthy.
+
+---
+
+# 19. SCREEN 9 — QUESTION REVIEW
+
+This is the MOST IMPORTANT UI SCREEN.
+
+Design it like a professional workspace.
+
+Three-column desktop layout:
+
+### RIGHT
+
+Question navigation
+
+```text
+السؤال 01
+السؤال 02
+السؤال 03
+السؤال 04
+السؤال 05
+```
+
+Each question shows:
+
+* type
+* difficulty
+* confidence
+* status
+
+---
+
+### CENTER
+
+Question content.
+
+Example:
+
+```text
+أي من الآليات التالية تفسر ارتفاع ضغط الدم
+في الحالة الموضحة؟
+```
+
+Options:
+
+A
+B
+C
+D
+
+Then citation panel:
+
+```text
+المصدر
+
+Anatomy Lecture 03
+Page 27
+```
+
+Then:
+
+```text
+Citation Confidence
+
+94%
+
+تحقق دقيق
+```
+
+---
+
+### LEFT
+
+Question metadata/actions.
+
+Actions:
+
+```text
+اعتماد
+تعديل
+رفض
+إعادة التوليد
+عرض النسخ
+```
+
+Make this workspace feel like the core product.
+
+---
+
+# 20. SCREEN 10 — QUESTION EDITOR
+
+Create a question editing view.
+
+Fields:
+
+Question text
+
+Answer choices
+
+Correct answer
+
+Explanation
+
+Difficulty
+
+Source
+
+Show:
+
+```text
+Version 3
+```
+
+Add version history.
+
+Visually demonstrate that editing creates a new version rather than replacing history.
+
+---
+
+# 21. SCREEN 11 — VERSION HISTORY
+
+Create a timeline:
+
+```text
+Version 1
+AI Generated
+
+Version 2
+Edited by Instructor
+
+Version 3
+Current
+```
+
+Use subtle motion.
+
+This should communicate trust and traceability.
+
+---
+
+# 22. SCREEN 12 — EXPORT
+
+Create final exam completion screen.
+
+Title:
+
+```text
+الامتحان جاهز
+```
+
+Show:
+
+```text
+8 / 8 أسئلة معتمدة
+```
+
+Checklist:
+
+✓ جميع الأسئلة معتمدة
+✓ جميع المصادر مرتبطة
+✓ لا توجد أسئلة معلقة
+✓ الامتحان جاهز للتصدير
+
+Buttons:
+
+```text
+تصدير Word
+تصدير PDF
+```
+
+These are visual buttons only.
+
+---
+
+# 23. SCREEN 13 — QUESTION BANK
+
+Create a clean question bank.
+
+Filters:
+
+* المساق
+* الفصل
+* النوع
+* الصعوبة
+* الحالة
+* Citation Confidence
+
+Show questions in a professional table/card system.
+
+---
+
+# 24. SCREEN 14 — USAGE
+
+Create:
+
+```text
+الاستخدام
+```
+
+Show:
+
+```text
+42 / 100
+```
+
+Progress indicator.
+
+Stats:
+
+* generations
+* questions
+* estimated AI usage
+
+Keep it simple.
+
+---
+
+# 25. SCREEN 15 — SETTINGS
+
+Create:
+
+### الحساب
+
+Name
+Email
+Avatar
+
+### المنظمة
+
+Organization name
+
+### التفضيلات
+
+Language
+Theme
+Notifications
+
+### الأمان
+
+Sessions
+Sign out all devices
+
+### الخطة
+
+Current plan
+Usage
+Subscription
+
+---
+
+# 26. EMPTY STATES
+
+Create visual examples for:
+
+* no courses
+* no materials
+* no exams
+* no style profile
+* no questions
+
+Each should have:
+
+Illustration / visual
+Short explanation
+One clear CTA
+
+---
+
+# 27. ERROR STATES
+
+Create visual examples for:
+
+### Upload failed
+
+### AI provider unavailable
+
+### Citation needs manual review
+
+### Generation failed
+
+### Export blocked
+
+Errors should look professional, calm and trustworthy.
+
+---
+
+# 28. RESPONSIVE UI
+
+The prototype must visually adapt to:
+
+* desktop
+* laptop
+* tablet
+* mobile
+
+On mobile:
+
+* sidebar becomes compact navigation/drawer
+* tables become cards
+* question review becomes stacked
+* buttons remain touch friendly
+
+Do not simply shrink the desktop interface.
+
+Actually redesign the mobile composition.
+
+---
+
+# 29. MOTION
+
+Use subtle motion.
+
+Good:
+
+* hover
+* fade
+* reveal
+* progress
+* transitions
+* soft spotlight
+* subtle card movement
+
+Bad:
+
+* excessive particles
+* constant animations
+* huge 3D scenes
+* aggressive glowing
+* bouncing everything
+* gaming-style effects
+
+Axiom is a professional academic productivity platform.
+
+---
+
+# 30. TRUST IS MORE IMPORTANT THAN VISUAL FLASHINESS
+
+Axiom deals with university examination content.
+
+The design must strongly communicate:
+
+**Source**
+**Confidence**
+**Review**
+**Version**
+**Approval**
+
+The professor should never feel that the AI is making the final academic decision.
+
+The UI should communicate:
+
+```text
+AI proposes
+↓
+Instructor reviews
+↓
+Instructor edits
+↓
+Instructor approves
+↓
+Exam is exported
+```
+
+---
+
+# 31. DO NOT ADD UNSUPPORTED FEATURES
+
+Do not invent:
+
+* student dashboards
+* social networks
+* chat
+* friends
+* messaging
+* public marketplace
+* gaming
+* AI agents dashboard
+* unnecessary enterprise functionality
+
+The product is specifically designed around university instructors and academic teams.
+
+---
+
+# 32. IMPORTANT PRODUCT SCOPE
+
+Use the project documentation as the source of truth.
+
+The active MVP should visually focus on:
+
+* personal instructor workspace
+* course
+* course materials
+* style profile
+* exam generation
+* question review
+* approval
+* export
+
+Future capabilities may appear as locked/future states, but should not dominate the design.
+
+---
+
+# 33. FINAL FILE STRUCTURE
+
+The final result must be:
+
+```text
+index.html
+```
+
+That file should contain:
+
+```text
+HTML
+CSS
+visual components
+mock data
+visual states
+```
+
+Do not create an application architecture.
+
+Do not create backend code.
+
+Do not create APIs.
+
+Do not create database schemas.
+
+Do not create authentication.
+
+Do not create real AI.
+
+---
+
+# 34. FINAL PRESENTATION
+
+When I open:
+
+```text
+index.html
+```
+
+I should immediately see a polished Axiom product interface.
+
+The prototype should feel like a real SaaS product that is already designed and ready for engineering handoff.
+
+The purpose of this prototype is to let the founder/designer evaluate:
+
+* visual identity
+* information architecture
+* navigation
+* layout
+* UX flow
+* hierarchy
+* spacing
+* interaction concepts
+* responsiveness
+* overall product quality
+
+before any real application development begins.
+
+---
+
+# 35. FINAL QUALITY BAR
+
+Do not generate something that looks like a generic dashboard template.
+
+Do not make the interface look AI-generated.
+
+Make the design intentional.
+
+Use strong visual hierarchy.
+
+Use excellent spacing.
+
+Use consistent components.
+
+Use realistic academic content.
+
+Use restrained animation.
+
+Use subtle React Bits-inspired visual effects.
+
+Make the product feel like:
+
+**A premium global academic AI SaaS.**
+
+The final deliverable is a **visual design prototype only**.
+
+## DO NOT BUILD AXIOM.
+
+## DESIGN AXIOM.
