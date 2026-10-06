@@ -61,6 +61,26 @@ type Question = {
   answer: number;
 };
 
+type CourseChapter = {
+  id: string;
+  short: string;
+  label: string;
+  meta: string;
+};
+
+type QuestionKind = "mcq" | "essay" | "shortAnswer";
+type ChapterQuestionPlan = Record<QuestionKind, number>;
+
+const questionTypes: { id: QuestionKind; label: string; english: string }[] = [
+  { id: "mcq", label: "اختيار من متعدد", english: "MCQ" },
+  { id: "essay", label: "مقالي", english: "Essay" },
+  { id: "shortAnswer", label: "إجابة قصيرة", english: "Short answer" },
+];
+
+const emptyQuestionPlan: ChapterQuestionPlan = { mcq: 0, essay: 0, shortAnswer: 0 };
+const defaultQuestionPlan: ChapterQuestionPlan = { mcq: 3, essay: 0, shortAnswer: 0 };
+const formatArabicCount = (value: number) => new Intl.NumberFormat("ar-EG").format(value);
+
 const initialQuestions: Question[] = [
   {
     id: 1,
@@ -156,12 +176,32 @@ const initialQuestions: Question[] = [
   },
 ];
 
-const availableChapters = [
-  { id: "chapter-01", short: "Chapter 01", label: "Foundations of Anatomy", meta: "٤ مواد · ١٨ مقطعاً مرتبطاً" },
-  { id: "chapter-02", short: "Chapter 02", label: "Tissues and Organization", meta: "٥ مواد · ١٢ مقطعاً مرتبطاً" },
-  { id: "chapter-03", short: "Chapter 03", label: "Cardiovascular System", meta: "٣ مواد · ٢٤ صفحة" },
-  { id: "chapter-04", short: "Chapter 04", label: "Respiratory System", meta: "٤ مواد · ١٥ مقطعاً مرتبطاً" },
-];
+const courseChapterCatalog: Record<string, CourseChapter[]> = {
+  "Anatomy I": [
+    { id: "chapter-01", short: "Chapter 01", label: "Foundations of Anatomy", meta: "٤ مواد · ١٨ مقطعاً مرتبطاً" },
+    { id: "chapter-02", short: "Chapter 02", label: "Tissues and Organization", meta: "٥ مواد · ١٢ مقطعاً مرتبطاً" },
+    { id: "chapter-03", short: "Chapter 03", label: "Cardiovascular System", meta: "٣ مواد · ٢٤ صفحة" },
+    { id: "chapter-04", short: "Chapter 04", label: "Respiratory System", meta: "٤ مواد · ١٥ مقطعاً مرتبطاً" },
+  ],
+  Pharmacology: [
+    { id: "chapter-01", short: "Chapter 01", label: "Principles of Pharmacology", meta: "٤ مواد · ١٦ مقطعاً مرتبطاً" },
+    { id: "chapter-02", short: "Chapter 02", label: "Pharmacokinetics", meta: "٣ مواد · ١٢ مقطعاً مرتبطاً" },
+    { id: "chapter-03", short: "Chapter 03", label: "Autonomic Drugs", meta: "٥ مواد · ٢٢ مقطعاً مرتبطاً" },
+    { id: "chapter-04", short: "Chapter 04", label: "Antimicrobial Therapy", meta: "٤ مواد · ١٨ مقطعاً مرتبطاً" },
+  ],
+  "Medical Ethics": [
+    { id: "chapter-01", short: "Chapter 01", label: "Ethical Principles", meta: "٣ مواد · ١٤ مقطعاً مرتبطاً" },
+    { id: "chapter-02", short: "Chapter 02", label: "Consent and Capacity", meta: "٤ مواد · ١٣ مقطعاً مرتبطاً" },
+    { id: "chapter-03", short: "Chapter 03", label: "Confidentiality", meta: "٣ مواد · ١١ مقطعاً مرتبطاً" },
+    { id: "chapter-04", short: "Chapter 04", label: "End-of-Life Decisions", meta: "٤ مواد · ١٧ مقطعاً مرتبطاً" },
+  ],
+  "Software Engineering": [
+    { id: "chapter-01", short: "Chapter 01", label: "Requirements Engineering", meta: "٤ مواد · ١٩ مقطعاً مرتبطاً" },
+    { id: "chapter-02", short: "Chapter 02", label: "Design and Architecture", meta: "٥ مواد · ١٦ مقطعاً مرتبطاً" },
+    { id: "chapter-03", short: "Chapter 03", label: "Software Testing", meta: "٤ مواد · ٢٠ مقطعاً مرتبطاً" },
+    { id: "chapter-04", short: "Chapter 04", label: "Maintenance and Evolution", meta: "٣ مواد · ١٢ مقطعاً مرتبطاً" },
+  ],
+};
 
 const navGroups = [
   {
@@ -184,7 +224,9 @@ const navGroups = [
 ];
 
 export function AxiomPrototype() {
-  const [screen, setScreen] = useState<Screen>("dashboard");
+  const [screen, setScreen] = useState<Screen>(() =>
+    new URLSearchParams(window.location.search).get("screen") === "generate" ? "generate" : "dashboard",
+  );
   const [courseTab, setCourseTab] = useState("نظرة عامة");
   const [selectedQuestion, setSelectedQuestion] = useState(0);
   const [approved, setApproved] = useState<number[]>([]);
@@ -197,11 +239,21 @@ export function AxiomPrototype() {
   const [version, setVersion] = useState(3);
   const [difficulty, setDifficulty] = useState("متوسط");
   const [toggles, setToggles] = useState([true, true, true, false]);
+  const [selectedCourse, setSelectedCourse] = useState("Anatomy I");
+  const [coursePickerOpen, setCoursePickerOpen] = useState(false);
   const [selectedChapters, setSelectedChapters] = useState(["chapter-03"]);
+  const [chapterQuestionPlans, setChapterQuestionPlans] = useState<Record<string, ChapterQuestionPlan>>({
+    "chapter-03": { mcq: 5, essay: 2, shortAnswer: 1 },
+  });
   const [chapterPickerOpen, setChapterPickerOpen] = useState(false);
+  const availableChapters = courseChapterCatalog[selectedCourse] ?? courseChapterCatalog["Anatomy I"];
   const selectedChapterOptions = availableChapters.filter((chapter) =>
     selectedChapters.includes(chapter.id),
   );
+  const chapterQuestionCount = (chapterId: string) =>
+    Object.values(chapterQuestionPlans[chapterId] ?? emptyQuestionPlan).reduce((sum, count) => sum + count, 0);
+  const totalQuestionCount = selectedChapters.reduce((sum, chapterId) => sum + chapterQuestionCount(chapterId), 0);
+  const totalQuestionLabel = `${formatArabicCount(totalQuestionCount)} سؤالاً`;
   const activeQuestion = questions[selectedQuestion];
   const approvalCount = approved.length;
   const pageTitle: Record<Screen, string> = {
@@ -242,10 +294,49 @@ export function AxiomPrototype() {
     else goTo("course");
   };
 
+  const chooseCourse = (courseName: string) => {
+    setCoursePickerOpen(false);
+    if (courseName === selectedCourse) return;
+    setSelectedCourse(courseName);
+    setSelectedChapters([]);
+    setChapterQuestionPlans({});
+    setChapterPickerOpen(true);
+    notify(`تم اختيار ${courseName}. اختاري الفصول التي ستدخل في الامتحان.`);
+  };
+
+  const toggleQuestionType = (chapterId: string, questionKind: QuestionKind) => {
+    setChapterQuestionPlans((current) => {
+      const plan = current[chapterId] ?? emptyQuestionPlan;
+      return {
+        ...current,
+        [chapterId]: {
+          ...plan,
+          [questionKind]: plan[questionKind] > 0 ? 0 : 1,
+        },
+      };
+    });
+  };
+
+  const changeChapterQuestionCount = (chapterId: string, questionKind: QuestionKind, change: number) => {
+    setChapterQuestionPlans((current) => {
+      const plan = current[chapterId] ?? emptyQuestionPlan;
+      return {
+        ...current,
+        [chapterId]: {
+          ...plan,
+          [questionKind]: Math.max(0, Math.min(30, plan[questionKind] + change)),
+        },
+      };
+    });
+  };
+
   const addChapter = (chapterId: string) => {
     const chapter = availableChapters.find((item) => item.id === chapterId);
     if (!chapter || selectedChapters.includes(chapterId)) return;
     setSelectedChapters((current) => [...current, chapterId]);
+    setChapterQuestionPlans((current) => current[chapterId]
+      ? current
+      : { ...current, [chapterId]: { ...defaultQuestionPlan } });
     setChapterPickerOpen(false);
     notify(`أُضيف ${chapter.short} إلى نطاق التغطية.`);
   };
@@ -297,7 +388,7 @@ export function AxiomPrototype() {
         {["materials", "style", "generate", "review", "editor", "history", "export"].includes(screen) && (
           <>
             <ChevronLeft size={15} className="ax-crumb-chevron ax-crumb-extra" />
-            <button className="ax-crumb-link" onClick={() => goTo("course")}>Anatomy I</button>
+             <button className="ax-crumb-link" onClick={() => goTo("course")}>{selectedCourse}</button>
           </>
         )}
       </div>
@@ -323,7 +414,7 @@ export function AxiomPrototype() {
       </div>
       <button className="ax-course-switch" onClick={() => goTo("course")}>
         <span className="ax-course-avatar"><Activity size={18} /></span>
-        <span className="ax-course-switch-copy"><b>Anatomy I</b><small>كلية الطب · 2024/25</small></span>
+         <span className="ax-course-switch-copy"><b>{selectedCourse}</b><small>المادة المحددة · 2024/25</small></span>
         <ChevronDown size={15} />
       </button>
       <div className="ax-nav-scroll">
@@ -585,13 +676,24 @@ export function AxiomPrototype() {
       <div className="ax-generation-layout">
         <div className="ax-main-stack">
           <div className="ax-panel ax-config-panel">
-            <div className="ax-panel-heading"><div><h3>محتوى الامتحان</h3><small>اختاري نطاق التغطية</small></div><span className="ax-step-index">١ / ٣</span></div>
+            <div className="ax-panel-heading"><div><h3>محتوى الامتحان</h3><small>اختاري المادة، ثم الفصول، ثم توزيع الأسئلة</small></div><span className="ax-step-index">١ / ٣</span></div>
             <div className="ax-field-grid">
-              <label className="ax-field"><span>المساق</span><button className="ax-select" onClick={() => notify("المساق الحالي: Anatomy I")}><span><Activity size={16} /> Anatomy I</span><ChevronDown size={15} /></button></label>
-              <div className="ax-field"><span>نطاق الفصول</span><button className="ax-select ax-add-chapter" aria-expanded={chapterPickerOpen} aria-controls="axiom-chapter-picker" onClick={() => setChapterPickerOpen((open) => !open)}><span><Plus size={15} /> إضافة فصل آخر</span><ChevronDown size={15} /></button></div>
+              <div className="ax-field ax-course-field">
+                <span>المادة / المساق</span>
+                <button className="ax-select" aria-expanded={coursePickerOpen} aria-controls="axiom-course-picker" onClick={() => setCoursePickerOpen((open) => !open)}><span><Activity size={16} /> {selectedCourse}</span><ChevronDown size={15} /></button>
+                {coursePickerOpen && <div className="ax-course-picker" id="axiom-course-picker">
+                  <div className="ax-course-picker-title">اختاري المادة التي سيُبنى عليها الامتحان</div>
+                  {Object.keys(courseChapterCatalog).map((courseName) => <button className="ax-course-option" type="button" key={courseName} aria-pressed={selectedCourse === courseName} onClick={() => chooseCourse(courseName)}>
+                    <span className="ax-course-option-icon"><BookOpen size={15} /></span>
+                    <b>{courseName}</b>
+                    {selectedCourse === courseName && <Check size={15} />}
+                  </button>)}
+                </div>}
+              </div>
+              <div className="ax-field"><span>نطاق الفصول</span><button className="ax-select ax-add-chapter" aria-expanded={chapterPickerOpen} aria-controls="axiom-chapter-picker" onClick={() => setChapterPickerOpen((open) => !open)}><span><Plus size={15} /> {selectedChapters.length === 0 ? "اختيار الفصول" : "إضافة فصل آخر"}</span><ChevronDown size={15} /></button></div>
             </div>
             <div className="ax-chapter-scope">
-              <div className="ax-chapter-scope-head"><span>الفصول المشمولة في الامتحان</span><small>{selectedChapters.length} {selectedChapters.length === 1 ? "فصل" : "فصول"}</small></div>
+              <div className="ax-chapter-scope-head"><span>الفصول المشمولة في الامتحان</span><small>{formatArabicCount(selectedChapters.length)} {selectedChapters.length === 1 ? "فصل" : "فصول"}</small></div>
               <div className="ax-selected-chapters">
                 {selectedChapterOptions.map((chapter) => <div className="ax-selected-chapter" key={chapter.id}>
                   <BookOpen size={15} />
@@ -609,9 +711,47 @@ export function AxiomPrototype() {
                 </button>)}
                 {selectedChapterOptions.length === availableChapters.length && <p className="ax-chapter-menu-empty">جميع فصول المساق المختارة ضمن النطاق.</p>}
               </div>}
-              <p className="ax-chapter-help">ستُستخدم مواد الفصول المحددة كلها كمصادر للأسئلة؛ أعداد الأسئلة أدناه هي إجمالي الامتحان.</p>
+              <div className="ax-chapter-allocation-head"><div><b>توزيع الأسئلة حسب الفصل</b><small>اختاري نوع السؤال وعدده داخل كل فصل على حدة.</small></div><span>{totalQuestionLabel}</span></div>
+              {selectedChapterOptions.length === 0 ? <div className="ax-chapter-empty"><BookOpen size={17} /><span>اختاري فصلاً أولاً لبدء توزيع الأسئلة.</span></div> : <div className="ax-chapter-plan-list">
+                {selectedChapterOptions.map((chapter) => {
+                  const plan = chapterQuestionPlans[chapter.id] ?? emptyQuestionPlan;
+                  const chapterTotal = chapterQuestionCount(chapter.id);
+                  return <section className="ax-chapter-plan" key={chapter.id}>
+                    <div className="ax-chapter-plan-heading">
+                      <span className="ax-chapter-plan-name"><b dir="ltr">{chapter.short}</b><span>{chapter.label}</span></span>
+                      <span className="ax-chapter-total">{formatArabicCount(chapterTotal)} سؤال</span>
+                    </div>
+                    <div className="ax-type-grid">
+                      {questionTypes.map((questionType) => {
+                        const count = plan[questionType.id];
+                        return <div className={`ax-type-card ${count > 0 ? "is-selected" : ""}`} key={questionType.id}>
+                          <button className="ax-type-select" type="button" aria-pressed={count > 0} onClick={() => toggleQuestionType(chapter.id, questionType.id)}>
+                            <span className="ax-type-check">{count > 0 && <Check size={12} />}</span>
+                            <span><b>{questionType.label}</b><small>{questionType.english}</small></span>
+                          </button>
+                          <div className="ax-stepper ax-chapter-stepper">
+                            <button type="button" disabled={count === 0} aria-label={`تقليل ${questionType.label} في ${chapter.short}`} onClick={() => changeChapterQuestionCount(chapter.id, questionType.id, -1)}>−</button>
+                            <b>{formatArabicCount(count)}</b>
+                            <button type="button" aria-label={`زيادة ${questionType.label} في ${chapter.short}`} onClick={() => changeChapterQuestionCount(chapter.id, questionType.id, 1)}>+</button>
+                          </div>
+                        </div>;
+                      })}
+                    </div>
+                  </section>;
+                })}
+              </div>}
+              <div className="ax-count-total"><span>إجمالي الأسئلة عبر الفصول المختارة</span><b>{totalQuestionLabel}</b></div>
+              <p className="ax-chapter-help">سيُجهّز النظام العدد والنوع اللذين حددتِهما لكل فصل؛ وستبقى كل الأسئلة مسودات بانتظار مراجعتك.</p>
             </div>
             <style>{`
+              .ax-app .ax-course-field{position:relative;z-index:20}
+              .ax-app .ax-course-picker{position:absolute;top:calc(100% + 5px);right:0;left:0;z-index:30;padding:7px;background:#fff;border:1px solid #dfe7ed;border-radius:8px;box-shadow:0 12px 28px rgba(38,54,74,.12)}
+              .ax-app .ax-course-picker-title{padding:6px 8px 9px;color:#788a9a;font-size:10px;border-bottom:1px solid #edf0f3}
+              .ax-app .ax-course-option{width:100%;min-height:39px;display:flex;align-items:center;gap:8px;padding:6px 8px;border:0;border-radius:5px;background:#fff;text-align:right;color:#4b6279}
+              .ax-app .ax-course-option:hover,.ax-app .ax-course-option[aria-pressed="true"]{background:#f1f5f8;color:#345779}
+              .ax-app .ax-course-option b{flex:1;font-size:11px;font-weight:600}
+              .ax-app .ax-course-option>svg{color:#5b8a70}
+              .ax-app .ax-course-option-icon{display:grid;place-items:center;width:26px;height:26px;border-radius:6px;background:#edf3f7;color:#577b9c}
               .ax-app .ax-add-chapter{color:#496b8d;border-color:#dce5ec;background:#fff}
               .ax-app .ax-add-chapter>span{display:flex;align-items:center;gap:7px}
               .ax-app .ax-chapter-scope{margin:12px 0 16px}
@@ -637,17 +777,38 @@ export function AxiomPrototype() {
               .ax-app .ax-chapter-option-copy small{display:block;color:#909ca8;font-size:9px;margin-top:3px}
               .ax-app .ax-chapter-option>svg{color:#9ba7b1}
               .ax-app .ax-chapter-menu-empty,.ax-app .ax-chapter-help{color:#8795a3;font-size:9px;line-height:1.7;margin:7px 0 0}
-              @media(max-width:640px){.ax-app .ax-chapter-scope-head{font-size:12px}.ax-app .ax-selected-chapter{min-height:40px;font-size:11px;gap:6px}.ax-app .ax-included-tag{font-size:10px}.ax-app .ax-remove-chapter{width:32px;height:32px}.ax-app .ax-chapter-option{min-height:48px}.ax-app .ax-chapter-option-copy b{font-size:12px;line-height:1.5}.ax-app .ax-chapter-option-copy small,.ax-app .ax-chapter-help{font-size:11px}.ax-app .ax-chapter-menu-heading b{font-size:13px}.ax-app .ax-chapter-menu-heading small{font-size:11px}}
+              .ax-app .ax-chapter-allocation-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:17px 0 9px}
+              .ax-app .ax-chapter-allocation-head b{display:block;color:#405970;font-size:12px}
+              .ax-app .ax-chapter-allocation-head small{display:block;margin-top:3px;color:#8b98a4;font-size:9px}
+              .ax-app .ax-chapter-allocation-head>span{flex:none;padding:5px 9px;border-radius:14px;background:#edf3f7;color:#426483;font-size:10px;font-weight:700}
+              .ax-app .ax-chapter-plan-list{display:grid;gap:9px}
+              .ax-app .ax-chapter-plan{padding:10px;border:1px solid #e4eaf0;border-radius:8px;background:#fbfcfd}
+              .ax-app .ax-chapter-plan-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+              .ax-app .ax-chapter-plan-name{display:flex;align-items:baseline;gap:8px;min-width:0;color:#78899a;font-size:10px}
+              .ax-app .ax-chapter-plan-name b{color:#44617d;font-size:10px}
+              .ax-app .ax-chapter-plan-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+              .ax-app .ax-chapter-total{flex:none;color:#597797;font-size:10px;font-weight:700}
+              .ax-app .ax-type-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+              .ax-app .ax-type-card{display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:0;padding:8px;border:1px solid #e6ebef;border-radius:7px;background:#fff}
+              .ax-app .ax-type-card.is-selected{border-color:#d4e0e9;background:#f8fafb}
+              .ax-app .ax-type-select{display:flex;align-items:flex-start;gap:7px;min-height:34px;padding:0;border:0;background:transparent;text-align:right;color:#546b80}
+              .ax-app .ax-type-check{display:grid;place-items:center;flex:none;width:16px;height:16px;margin-top:1px;border:1px solid #d2dbe2;border-radius:4px;background:#fff;color:#fff}
+              .ax-app .ax-type-select[aria-pressed="true"] .ax-type-check{border-color:#547b9c;background:#547b9c}
+              .ax-app .ax-type-select>b,.ax-app .ax-type-select span:last-child{min-width:0}
+              .ax-app .ax-type-select span:last-child b{display:block;color:#52697e;font-size:10px;line-height:1.45}
+              .ax-app .ax-type-select span:last-child small{display:block;margin-top:2px;color:#a0aab3;font-size:8px}
+              .ax-app .ax-chapter-stepper{align-self:flex-end}
+              .ax-app .ax-chapter-stepper button{width:27px;height:27px}
+              .ax-app .ax-chapter-stepper b{min-width:20px;text-align:center;font-size:11px}
+              .ax-app .ax-count-total{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding:9px 10px;border-top:1px solid #e9edf0;color:#728394;font-size:10px}
+              .ax-app .ax-count-total b{color:#345779;font-size:12px}
+              .ax-app .ax-chapter-empty{display:flex;align-items:center;gap:8px;padding:11px;border:1px dashed #d7e1e8;border-radius:7px;color:#74879a;background:#f8fafb;font-size:11px}
+              .ax-app .ax-chapter-empty svg{color:#7794ad}
+              .ax-app .ax-generate-requirement{display:block;margin-top:7px;color:#9a7660;font-size:10px;line-height:1.6}
+              .ax-app .ax-summary-panel .ax-button:disabled{opacity:.48;cursor:not-allowed;box-shadow:none}
+              .ax-app .ax-chapter-stepper button:disabled{opacity:.4;cursor:not-allowed}
+              @media(max-width:640px){.ax-app .ax-field-grid{grid-template-columns:1fr}.ax-app .ax-course-picker{position:relative;top:auto;left:auto;right:auto;margin-top:5px}.ax-app .ax-chapter-scope-head{font-size:12px}.ax-app .ax-selected-chapter{min-height:40px;font-size:11px;gap:6px}.ax-app .ax-included-tag{font-size:10px}.ax-app .ax-remove-chapter{width:32px;height:32px}.ax-app .ax-chapter-option{min-height:48px}.ax-app .ax-chapter-option-copy b{font-size:12px;line-height:1.5}.ax-app .ax-chapter-option-copy small,.ax-app .ax-chapter-help{font-size:11px}.ax-app .ax-chapter-menu-heading b{font-size:13px}.ax-app .ax-chapter-menu-heading small{font-size:11px}.ax-app .ax-chapter-plan{padding:9px}.ax-app .ax-chapter-plan-heading{align-items:flex-start}.ax-app .ax-chapter-plan-name{flex-direction:column;gap:2px;font-size:11px}.ax-app .ax-chapter-plan-name b{font-size:11px}.ax-app .ax-type-grid{grid-template-columns:1fr}.ax-app .ax-type-card{flex-direction:row;align-items:center;min-height:58px;padding:7px 9px}.ax-app .ax-type-select{align-items:center;min-height:44px;flex:1}.ax-app .ax-type-select span:last-child b{font-size:12px}.ax-app .ax-type-select span:last-child small{font-size:10px}.ax-app .ax-chapter-stepper button{width:44px;height:44px}.ax-app .ax-count-total{font-size:11px}.ax-app .ax-count-total b{font-size:13px}.ax-app .ax-chapter-help{font-size:11px}}
             `}</style>
-            <div className="ax-field-label">أنواع الأسئلة وعددها</div>
-            <div className="ax-question-counts">
-              {[
-                ["اختيار من متعدد", "MCQ", "٥"],
-                ["مقالي", "Essay", "٢"],
-                ["إجابة قصيرة", "Short answer", "١"],
-              ].map(([label, type, count]) => <div className="ax-count-card" key={type}><span className="ax-check-square checked"><Check size={13} /></span><div><b>{label}</b><small>{type}</small></div><div className="ax-stepper"><button onClick={() => notify(`تم تعديل عدد ${label} توضيحياً.`)} aria-label="تقليل">−</button><b>{count}</b><button onClick={() => notify(`تم تعديل عدد ${label} توضيحياً.`)} aria-label="زيادة">+</button></div></div>)}
-            </div>
-            <div className="ax-count-total"><span>إجمالي الأسئلة</span><b>٨ أسئلة</b></div>
           </div>
           <div className="ax-panel ax-config-panel">
             <div className="ax-panel-heading"><div><h3>مستوى الصعوبة</h3><small>يمكن تعديل صعوبة كل سؤال في المراجعة</small></div><span className="ax-step-index">٢ / ٣</span></div>
@@ -668,8 +829,8 @@ export function AxiomPrototype() {
           </div>
         </div>
         <aside className="ax-generation-aside">
-           <div className="ax-panel ax-summary-panel"><div className="ax-panel-heading"><div><h3>ملخص الإعداد</h3><small>راجعي اختياراتك</small></div><FileCheck2 size={18} /></div><div className="ax-summary-course"><span className="ax-course-avatar"><Activity size={17} /></span><div><b>Anatomy I</b><small>{selectedChapterOptions.map((chapter) => chapter.short).join(" · ")}</small></div></div><div className="ax-summary-row"><span>نطاق الفصول</span><b>{selectedChapterOptions.length} {selectedChapterOptions.length === 1 ? "فصل" : "فصول"}</b></div><div className="ax-summary-row"><span>الأسئلة</span><b>٨ أسئلة</b></div><div className="ax-summary-row"><span>الصعوبة</span><b>{difficulty}</b></div><div className="ax-summary-row"><span>بصمة الأسلوب</span><b className="ax-green">v1.3 · مفعّلة</b></div><div className="ax-summary-row"><span>الاستشهادات</span><b>مطلوبة</b></div><div className="ax-summary-note"><ShieldCheck size={16} /><span>سيتم إعداد مسودة أولية. لا يُعتمد أي سؤال دون مراجعتك.</span></div><button className="ax-button ax-button-primary ax-button-full" onClick={() => { goTo("progress"); window.setTimeout(() => goTo("review"), 4200); }}>ابدأ التوليد <Sparkles size={16} /></button><div className="ax-prototype-caption">محاكاة مرئية · لا يوجد اتصال بخدمة توليد</div></div>
-          <div className="ax-panel ax-quick-context"><div className="ax-panel-heading"><h3>مصادر الفصل</h3><span className="ax-status-pill status-ready"><span /> جاهز</span></div><div><span className="ax-file-mark pdf">PDF</span><span><b>Anatomy Lecture 03</b><small>٢٤ صفحة · ٨ مقاطع ذات صلة</small></span></div><div><span className="ax-file-mark ppt">PPT</span><span><b>Cardiovascular System</b><small>٣٦ شريحة · معالجة مكتملة</small></span></div><button onClick={() => goTo("materials")}>عرض المواد <ArrowLeft size={14} /></button></div>
+           <div className="ax-panel ax-summary-panel"><div className="ax-panel-heading"><div><h3>ملخص الإعداد</h3><small>راجعي اختياراتك</small></div><FileCheck2 size={18} /></div><div className="ax-summary-course"><span className="ax-course-avatar"><Activity size={17} /></span><div><b>{selectedCourse}</b><small>{selectedChapterOptions.map((chapter) => chapter.short).join(" · ") || "لم يتم اختيار فصول بعد"}</small></div></div><div className="ax-summary-row"><span>نطاق الفصول</span><b>{formatArabicCount(selectedChapterOptions.length)} {selectedChapterOptions.length === 1 ? "فصل" : "فصول"}</b></div><div className="ax-summary-row"><span>إجمالي الأسئلة</span><b>{totalQuestionLabel}</b></div><div className="ax-summary-row"><span>الصعوبة</span><b>{difficulty}</b></div><div className="ax-summary-row"><span>بصمة الأسلوب</span><b className="ax-green">v1.3 · مفعّلة</b></div><div className="ax-summary-row"><span>الاستشهادات</span><b>مطلوبة</b></div><div className="ax-summary-note"><ShieldCheck size={16} /><span>سيتم إعداد مسودة أولية. لا يُعتمد أي سؤال دون مراجعتك.</span></div><button className="ax-button ax-button-primary ax-button-full" disabled={selectedChapters.length === 0 || totalQuestionCount === 0} onClick={() => { goTo("progress"); window.setTimeout(() => goTo("review"), 4200); }}>ابدأ التوليد <Sparkles size={16} /></button>{totalQuestionCount === 0 && <small className="ax-generate-requirement">اختاري فصلاً ونوع سؤال واحداً على الأقل للمتابعة.</small>}<div className="ax-prototype-caption">محاكاة مرئية · لا يوجد اتصال بخدمة توليد</div></div>
+          <div className="ax-panel ax-quick-context"><div className="ax-panel-heading"><h3>مصادر المادة</h3><span className="ax-status-pill status-ready"><span /> جاهز</span></div><div><span className="ax-file-mark pdf">PDF</span><span><b>{selectedCourse} · Lecture notes</b><small>مصدر موثّق مرتبط بالفصول المختارة</small></span></div><div><span className="ax-file-mark ppt">PPT</span><span><b>{selectedCourse} · Course slides</b><small>{formatArabicCount(selectedChapterOptions.length)} فصول ضمن نطاق الامتحان</small></span></div><button onClick={() => goTo("materials")}>عرض المواد <ArrowLeft size={14} /></button></div>
         </aside>
       </div>
     </>
@@ -680,7 +841,7 @@ export function AxiomPrototype() {
       <div className="ax-progress-overline"><span className="ax-brand-mark ax-brand-mark-small"><span className="ax-mark-a">A</span><i /></span> إعداد مسودة · نموذج توضيحي</div>
       <h1>جاري بناء الامتحان</h1>
       <p className="ax-progress-intro">تجربة مرئية لخطوات إعداد مسودة السؤال. لا يتم استدعاء نموذج ذكاء اصطناعي.</p>
-       <div className="ax-progress-summary"><span><Activity size={18} /> Anatomy I</span><i /><span>{selectedChapterOptions.map((chapter) => chapter.short).join(" · ")}</span><i /><b>٨ أسئلة</b></div>
+       <div className="ax-progress-summary"><span><Activity size={18} /> {selectedCourse}</span><i /><span>{selectedChapterOptions.map((chapter) => chapter.short).join(" · ")}</span><i /><b>{totalQuestionLabel}</b></div>
       <div className="ax-progress-visual"><div className="ax-progress-orbit orbit-one" /><div className="ax-progress-orbit orbit-two" /><div className="ax-progress-center"><span className="ax-brand-mark"><span className="ax-mark-a">A</span><i /></span><b>AI</b></div><span className="ax-orbit-node node-one"><FileText size={15} /></span><span className="ax-orbit-node node-two"><Sparkles size={15} /></span><span className="ax-orbit-node node-three"><ShieldCheck size={15} /></span></div>
       <div className="ax-progress-timeline">
         {["تجهيز المادة", "استرجاع المقاطع المناسبة", "تطبيق بصمة الأستاذ", "توليد الأسئلة", "فحص الاستشهادات", "تجهيز المراجعة"].map((step, index) => <div className={`ax-progress-step ${index < 3 ? "done" : index === 3 ? "working" : ""}`} key={step}><span>{index < 3 ? <Check size={13} /> : index === 3 ? <i /> : <b>{index + 1}</b>}</span><small>{step}</small></div>)}
@@ -692,10 +853,11 @@ export function AxiomPrototype() {
 
   const renderReview = () => (
     <>
-       <div className="ax-review-heading"><div><div className="ax-eyebrow"><span className="ax-eyebrow-line" /> مراجعة بشرية مطلوبة</div><h1>مراجعة الأسئلة</h1><p>Anatomy I <i /> {selectedChapterOptions.map((chapter) => `${chapter.short} — ${chapter.label}`).join(" · ")} <i /> مسودة امتحان</p></div><div className="ax-review-heading-actions"><span className="ax-review-progress"><b>{approvalCount}</b> / 8 معتمدة</span>{button("جاهزية التصدير", () => goTo("export"), "secondary", <ArrowLeft size={15} />)}</div></div>
+       <div className="ax-review-heading"><div><div className="ax-eyebrow"><span className="ax-eyebrow-line" /> مراجعة بشرية مطلوبة</div><h1>مراجعة الأسئلة</h1><p>{selectedCourse} <i /> {selectedChapterOptions.map((chapter) => `${chapter.short} — ${chapter.label}`).join(" · ")} <i /> {totalQuestionLabel} ضمن التوزيع</p></div><div className="ax-review-heading-actions"><span className="ax-review-progress"><b>{approvalCount}</b> / 8 أمثلة مراجعة</span>{button("جاهزية التصدير", () => goTo("export"), "secondary", <ArrowLeft size={15} />)}</div></div>
+      {selectedCourse !== "Anatomy I" && <div className="ax-state-note"><CircleHelp size={16} /><span>نص السؤال المعروض مثال توضيحي من Anatomy I؛ أما توزيع الامتحان فيعكس المادة والفصول التي اخترتِها.</span></div>}
       <div className="ax-review-workspace">
         <aside className="ax-review-list ax-panel">
-          <div className="ax-review-list-header"><div><b>الأسئلة</b><small>٨ أسئلة في المسودة</small></div><button className="ax-kebab" onClick={() => notify("يمكن ترتيب أسئلة المسودة يدوياً.")}><MoreHorizontal size={16} /></button></div>
+          <div className="ax-review-list-header"><div><b>معاينة الأسئلة</b><small>٨ أمثلة توضيحية · {totalQuestionLabel} في الإعداد</small></div><button className="ax-kebab" onClick={() => notify("يمكن ترتيب أسئلة المسودة يدوياً.")}><MoreHorizontal size={16} /></button></div>
           <div className="ax-question-nav">
             {questions.map((question, index) => <button key={question.id} className={`ax-question-nav-item ${index === selectedQuestion ? "selected" : ""}`} onClick={() => { setSelectedQuestion(index); setEditText(question.text); }}>
               <span className={`ax-q-number ${approved.includes(question.id) ? "approved" : rejected.includes(question.id) ? "rejected" : ""}`}>{String(question.id).padStart(2, "0")}</span>
