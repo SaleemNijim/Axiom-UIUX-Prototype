@@ -5,10 +5,11 @@
 - Repository: `SaleemNijim/Axiom-UIUX-Prototype`
 - `main` baseline for this corrective pass: `c9306057e156740c273fb5e5019b5044f415dd4f` (merged PR #1).
 - Corrective branch: `fix/axiom-core-review-flow-2026-11-15`
-- Implementation commit before this handoff record: `990c8c5a16995e9c61dd0efbf4d04ce7eeea5f29`
+- Core UI implementation commit before the final handoff/CI updates: `990c8c5a16995e9c61dd0efbf4d04ce7eeea5f29`.
+- Design-reference, historical-prompt restoration, and handoff documentation commit: `48b2a6897ef735e12075b2685743a0829c794879` (the handoff file is subsequently updated on the same branch).
 - Corrective PR: [#2 — restore Axiom core exam journey and evidence review UX](https://github.com/SaleemNijim/Axiom-UIUX-Prototype/pull/2)
 - PR #2 is open and unmerged. GitHub reported it mergeable at the latest check.
-- Latest CI observation before the handoff-record commit: `professor-prototype` was queued. Do not treat it as passing until a completed run confirms success.
+- Verified CI run `43721978338` on commit `48b2a6897ef735e12075b2685743a0829c794879` completed successfully. Typecheck, UX contract guard, Vite build and job cleanup all passed. Any subsequent documentation commit must be checked again on the updated head.
 
 ## Owner's non-negotiable design direction
 
