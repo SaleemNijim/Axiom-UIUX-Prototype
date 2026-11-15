@@ -477,7 +477,25 @@ export function AxiomPrototype() {
     return <>
     <div className="axp-review-heading"><div><small>{t("مراجعة بشرية مطلوبة", "Instructor review required")}</small><h1>{t("مراجعة الأسئلة", "Question review")}</h1><p>{course.name} · {courseQuestions.length} {t("أسئلة في بيانات العرض", "demo questions")}</p></div><div className="axp-heading-actions">{btn(t("قائمة الأسئلة", "Question list"), () => go("questions"))}{btn(t("اعتماد المؤهل فقط", "Approve eligible only"), bulkApprove, true, <Check />)}</div></div>
     <div className="axp-review-workspace">
-      <aside className="axp-panel axp-review-list"><SectionHeading icon={<List />} title={t("قائمة الأسئلة", "Question list")} subtitle={`${courseQuestions.length} ${t("عينات تجريبية", "demo fixtures")}`} />{courseQuestions.map(item => <button className={`axp-review-item ${question.id === item.id ? "active" : ""}`} key={item.id} onClick={() => setSelectedQuestionId(item.id)}><span className="axp-question-index">{item.id.slice(-3)}</span><span><b>{versionOf(item).text}</b><small>{item.kind} · {statusText(item.status)}</small></span><span className="axp-review-dot" /></button>)}</aside>
+      <aside className="axp-panel axp-review-list">
+        <SectionHeading icon={<List />} title={t("قائمة الأسئلة", "Question list")} subtitle={`${courseQuestions.length} ${t("سؤالاً في بيانات العرض", "demo questions")}`} />
+        <label className="axp-review-search"><Search /><input value={questionSearch} onChange={event => setQuestionSearch(event.target.value)} placeholder={t("ابحث في الأسئلة", "Search questions")} /></label>
+        <select className="axp-review-filter" aria-label={t("تصفية حالة السؤال", "Filter question status")} value={questionFilter} onChange={event => setQuestionFilter(event.target.value as "all" | QStatus)}>
+          <option value="all">{t("كل الحالات", "All statuses")}</option>
+          <option value="pending_review">{t("بانتظار المراجعة", "Pending review")}</option>
+          <option value="approved">{t("معتمد", "Approved")}</option>
+          <option value="rejected">{t("مرفوض", "Rejected")}</option>
+        </select>
+        <div className="axp-review-items">
+          {questionsFiltered.map(item => <button className={`axp-review-item ${question.id === item.id ? "active" : ""}`} key={item.id} onClick={() => setSelectedQuestionId(item.id)}>
+            <span className="axp-question-index">{item.id.slice(-3)}</span>
+            <span className="axp-review-item-copy"><b>{versionOf(item).text}</b><small>{item.kind} · {statusText(item.status)}</small></span>
+            <span className={`axp-review-dot ${item.status}`} aria-label={statusText(item.status)} />
+          </button>)}
+          {!questionsFiltered.length && <div className="axp-review-list-empty">{t("لا توجد أسئلة تطابق البحث أو الحالة المحددة.", "No questions match this search or status filter.")}</div>}
+        </div>
+        <p className="axp-review-list-note">{t("قرار المراجعة يبقى مستقلاً لكل سؤال؛ حالة السؤال لا تعني أن الدليل صحيح تلقائياً.", "Each question has its own review decision; question status does not imply valid evidence.")}</p>
+      </aside>
       <main className="axp-panel axp-question-main"><div className="axp-question-main-head"><div><Pill tone="blue">{question.kind}</Pill><Pill tone={statusTone(question.status)}>{statusText(question.status)}</Pill></div><span>{t("الإصدار", "Version")} {current.version}</span></div><h2>{current.text}</h2>
         {question.kind === "MCQ" ? <div className="axp-option-list">{current.options.map((option, index) => <div className={`axp-option ${index === current.correct ? "correct" : ""}`} key={`${question.id}-${index}`}><span>{String.fromCharCode(65 + index)}</span><p>{option}</p>{index === current.correct && <Pill tone="green">{t("الإجابة المحددة", "Marked answer")}</Pill>}</div>)}</div> : <div className="axp-essay-preview"><b>{t("سؤال مقالي", "Essay prompt")}</b><p>{t("تُراجع الإجابة النموذجية والتفسير مع النص ومصدره.", "The model answer and explanation are reviewed with the question and its source.")}</p></div>}
         <div className="axp-question-metadata"><div><small>{t("الصعوبة المقترحة", "Suggested difficulty")}</small><b>{current.suggestedDifficulty}</b></div><div><small>{t("مراجعة يدوية", "Manual review")}</small><b>{question.manualReview ? t("مطلوبة", "Required") : t("غير مطلوبة", "Not required")}</b></div><div><small>{t("حالة السؤال", "Question state")}</small><b>{statusText(question.status)}</b></div><div><small>{t("أهلية الدليل", "Evidence eligibility")}</small><b>{eligible(question) ? t("مؤهل مبدئياً", "Eligible") : t("غير مؤهل", "Not eligible")}</b></div></div>
