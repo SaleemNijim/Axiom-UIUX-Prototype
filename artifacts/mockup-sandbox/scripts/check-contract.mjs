@@ -16,6 +16,17 @@ const required = [
   ["Student Exam artifact", /Student Exam/],
   ["Instructor Answer Key artifact", /Instructor Answer Key/],
   ["question version pinning", /question_version_id/],
+  ["dedicated building-progress screen", /const renderProgress = \(\) =>/],
+  ["progress route is connected", /case "progress": return renderProgress\(\)/],
+  ["successful generation enters progress", /go\("progress"\)/],
+  ["exam catalogue summary is present", /axp-exam-summary/],
+  ["exam catalogue uses immutable snapshots", /Finalized snapshots|Finalized versions/],
+  ["three-panel review navigation", /axp-review-list/],
+  ["question review actions stay with the selected question", /axp-review-actions/],
+  ["source evidence inspector is present", /axp-evidence-panel/],
+  ["exact cited passage is inspectable", /axp-passage/],
+  ["question review list search and filter", /axp-review-search[\s\S]*axp-review-filter/],
+  ["progress explicitly disclaims live background work", /not live progress|ليست مؤشراً حياً للتقدم/],
 ];
 
 for (const [label, pattern] of required) {
