@@ -1,0 +1,48 @@
+name: Axiom professor prototype checks
+
+on:
+  pull_request:
+    paths:
+      - "artifacts/mockup-sandbox/**"
+      - "scripts/**"
+      - ".conversation/**"
+      - "replit.md"
+      - ".github/workflows/axiom-prototype-checks.yml"
+  push:
+    branches: [main]
+    paths:
+      - "artifacts/mockup-sandbox/**"
+      - "scripts/**"
+      - ".conversation/**"
+      - "replit.md"
+      - ".github/workflows/axiom-prototype-checks.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  professor-prototype:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck professor prototype package
+        run: pnpm --filter @workspace/mockup-sandbox run typecheck
+      - name: Check accepted UX contract guardrails
+        run: node artifacts/mockup-sandbox/scripts/check-contract.mjs
+      - name: Build mockup sandbox
+        run: pnpm --filter @workspace/mockup-sandbox run build
+        env:
+          PORT: "5000"
+          BASE_PATH: "/"
