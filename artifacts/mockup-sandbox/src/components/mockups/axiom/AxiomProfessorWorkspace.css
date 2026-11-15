@@ -738,3 +738,74 @@
   .axp-progress-actions { width:100%; }
   .axp-progress-actions .axp-btn { flex:1; white-space:normal; }
 }
+
+
+/* Question Review: keep navigation, editable question and evidence inspection readable together. */
+.axp-review-list {
+  display:flex;
+  flex-direction:column;
+  max-height:calc(100vh - 190px);
+  min-height:520px;
+  overflow:hidden;
+}
+.axp-review-search {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-height:35px;
+  margin:3px 0 7px;
+  padding:0 9px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:#fff;
+  color:#8b99a5;
+}
+.axp-review-search svg { width:13px; height:13px; }
+.axp-review-search input {
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#566e83;
+  font-size:9px;
+}
+.axp-review-search input:focus-visible { outline:0; }
+.axp-review-filter {
+  width:100%;
+  min-height:33px;
+  margin-bottom:8px;
+  padding:0 8px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:#fbfcfd;
+  color:#728496;
+  font-size:9px;
+}
+.axp-review-items { min-height:0; flex:1; overflow:auto; overscroll-behavior:contain; }
+.axp-review-item-copy { min-width:0; flex:1; }
+.axp-review-dot.pending_review { background:#d2a35f; }
+.axp-review-dot.approved { background:#5e8a6e; }
+.axp-review-dot.rejected { background:#b96c6c; }
+.axp-review-list-empty { padding:17px 7px; color:#97a3ad; font-size:9px; line-height:1.8; text-align:center; }
+.axp-review-list-note {
+  margin:9px 0 0;
+  padding-top:8px;
+  border-top:1px solid #eff2f4;
+  color:#9aa5ae;
+  font-size:8px;
+  line-height:1.8;
+}
+.axp-question-main { min-height:520px; }
+.axp-evidence-panel { max-height:calc(100vh - 190px); overflow:auto; }
+@media (max-width: 1180px) {
+  .axp-review-list { max-height:650px; min-height:430px; }
+  .axp-evidence-panel { max-height:none; }
+}
+@media (max-width: 850px) {
+  .axp-review-list { max-height:560px; min-height:0; }
+  .axp-question-main { min-height:0; }
+}
+@media (max-width: 580px) {
+  .axp-review-list { max-height:440px; }
+}
