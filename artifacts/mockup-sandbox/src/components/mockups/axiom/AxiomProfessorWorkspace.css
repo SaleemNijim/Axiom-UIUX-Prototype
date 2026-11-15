@@ -289,7 +289,7 @@
 .axp-review-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:14px; }
 .axp-review-heading h1 { font-size:24px; }
 .axp-review-heading p { margin:3px 0 0; }
-.axp-review-workspace { display:grid; grid-template-columns:minmax(225px,.78fr) minmax(350px,1.4fr) minmax(255px,.88fr); gap:12px; align-items:start; }
+.axp-review-workspace { display:grid; direction:ltr; grid-template-columns:minmax(225px,.78fr) minmax(350px,1.4fr) minmax(255px,.88fr); gap:12px; align-items:start; }
 .axp-review-list { padding:13px; }
 .axp-review-list .axp-section-heading { margin-bottom:8px; }
 .axp-review-item { display:flex; align-items:center; gap:8px; width:100%; min-height:68px; padding:8px 4px; border:0; border-bottom:1px solid #eff2f4; background:transparent; color:#718397; text-align:start; }
