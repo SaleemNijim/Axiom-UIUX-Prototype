@@ -40,6 +40,19 @@ Implement/reconcile these stages in the order in Baseline §10:
 9. **Exam Builder, Finalize and Export:** compose a Draft from approved questions and pin the selected `question_version_id`. Allow selection/removal, ordering, grouping and marks only as specified by the composition contract. The Builder is not a question editor. Notify when a newer approved version exists; replacement must be explicit and Draft-only. Finalize creates an immutable numbered snapshot. A later change creates a new Draft revision; prior snapshots and exports remain unchanged. Export separate Student Exam and Instructor Answer Key artifacts, each in PDF/DOCX, from the same finalized snapshot. The Student Exam contains no answers; the Answer Key requires current course-instructor authorization server-side.
 10. **Dashboard, Style Profile and QA:** use only fixture-backed values. Style Profile is Capture Only in MVP: observations are not consumed to change generation and do not automatically update the profile. Provide empty/error/loading/unavailable states where applicable. Verify desktop/tablet/mobile, English LTR and Arabic RTL.
 
+## Owner-provided core exam journey reference
+
+The owner-provided four-screen visual reference captured on 2026-11-15 is a core product concept, not disposable legacy artwork. Its sequence must remain visible in the prototype:
+
+1. **Exams list:** the professor's exam workspace, showing current drafts and finalized snapshots with clear course/scope context and status. Summary values must be derived from the local fixture state; mark all fixture records as illustrative. The only exam lifecycle values are Draft and Finalized; export is an artifact event, not a new exam status.
+2. **Exam setup:** a guided configuration workspace that makes course, verified chapter/page scope and per-chapter MCQ/Essay allocation understandable. Keep the 30-question aggregate limit and the exact 100% / 80–99% / below-80% scope gate. No old unsupported fields.
+3. **Building progress:** a focused, calm, centered progress-stage composition that communicates the journey from source preparation through retrieval, professor-style application, question drafting, citation checks and review readiness. In the prototype this is a clearly labelled visual walkthrough only; never claim it is live job progress.
+4. **Question Review:** the core differentiated Axiom experience. Preserve a spacious three-panel desktop workspace with question navigation/status, selected question content and instructor decisions, and an inspectable source-evidence pane. The current UI Spec defines the semantic panel contract: question list, question/editor/actions, exact source/version/page/block/passage and source preview. On smaller screens, panels become readable stacked sections or drawers; never compress them into unreadable columns.
+
+These four screens are a single professor workflow, not four unrelated mockups: Exams → Setup → Building → Question Review → approved questions → Exam Builder → Finalize → Student Exam / Instructor Answer Key.
+
+The 2026-11-15 screenshots are the owner's visual anchor for composition and sequence. The current Professor-Workspace-UI-Spec and accepted ADR/M6–M8 contracts remain authoritative for fields, state, permissions, and behavior. Preserve the intent and hierarchy of the screenshots, but do not reintroduce stale controls or values from the historical prompt. The companion decision record is .conversation/AXIOM-CORE-EXAM-JOURNEY-DESIGN-REFERENCE.md.
+
 ## Explicitly prohibited or blocked
 
 Do not introduce:
