@@ -550,3 +550,191 @@
   .axp-state-gallery { grid-template-columns:1fr; }
   .axp-material-drawer { width:min(390px,94vw); }
 }
+
+/* Core exam-list and generation-progress stages restored from the original Axiom journey. */
+.axp-exam-summary {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:0;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fff;
+}
+.axp-exam-summary > div {
+  display:grid;
+  gap:3px;
+  min-width:0;
+  padding:15px 17px;
+  border-inline-start:1px solid var(--line);
+}
+.axp-exam-summary > div:first-child { border-inline-start:0; }
+.axp-exam-summary small { color:#8796a4; font-size:9px; }
+.axp-exam-summary b { color:#334f6c; font:700 21px Inter,'Noto Sans Arabic',sans-serif; }
+.axp-exam-summary span { color:#98a4ae; font-size:9px; line-height:1.6; }
+.axp-exam-record {
+  display:flex;
+  align-items:center;
+  gap:13px;
+  min-width:0;
+  padding:13px 0;
+  border-bottom:1px solid #eff2f4;
+}
+.axp-exam-record:last-of-type { border-bottom:0; }
+.axp-exam-record-icon {
+  width:39px;
+  height:39px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#edf3f8;
+  color:#587b9a;
+}
+.axp-exam-record-icon.finalized { background:#edf5ef; color:#598267; }
+.axp-exam-record-copy { display:grid; gap:3px; flex:1; min-width:0; }
+.axp-exam-record-copy b { color:#455c72; font-size:11px; font-weight:650; }
+.axp-exam-record-copy small { color:#8e9ca8; font-size:9px; line-height:1.65; }
+.axp-exam-lifecycle-note {
+  margin:13px 0 0;
+  padding:10px 12px;
+  border-radius:8px;
+  background:#f7f9fa;
+  color:#8493a0;
+  font-size:9px;
+  line-height:1.8;
+}
+.axp-exam-next-review .axp-section-heading { margin-bottom:0; }
+
+/* The dedicated progress composition is a stage illustration, never a live job indicator. */
+.axp-progress-shell {
+  width:min(1080px,100%);
+  min-height:calc(100vh - 170px);
+  margin:0 auto;
+  padding:38px 20px 34px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:17px;
+  text-align:center;
+}
+.axp-progress-kicker { display:flex; align-items:center; justify-content:center; gap:10px; color:#8b99a6; font-size:10px; }
+.axp-progress-kicker .axp-brand-mark { width:31px; height:31px; border-radius:9px; font-size:18px; }
+.axp-progress-shell > h1 { margin:0; color:#2e4762; font-size:29px; font-weight:650; letter-spacing:-.4px; }
+.axp-progress-intro { max-width:650px; margin:0; color:#8493a1; font-size:11px; line-height:1.9; }
+.axp-progress-summary {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:12px;
+  min-height:40px;
+  padding:7px 16px;
+  border:1px solid #e5ebf0;
+  border-radius:24px;
+  background:white;
+  color:#73869a;
+  font-size:9px;
+}
+.axp-progress-summary span { display:flex; align-items:center; gap:6px; }
+.axp-progress-summary span svg { width:14px; height:14px; color:#7291aa; }
+.axp-progress-summary i { width:1px; height:15px; background:#e7edf1; }
+.axp-progress-summary b { color:#405c77; font-size:10px; }
+.axp-progress-visual { position:relative; width:180px; height:180px; margin:7px 0 2px; display:grid; place-items:center; }
+.axp-progress-orbit { position:absolute; inset:0; border:1px solid #e3eaf0; border-radius:50%; }
+.axp-progress-orbit.orbit-two { inset:17px; border-style:dashed; border-color:#e5ebef; }
+.axp-progress-core {
+  width:78px;
+  height:78px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  border:7px solid #f4f7f9;
+  border-radius:50%;
+  background:white;
+  box-shadow:0 7px 24px #233f5910;
+}
+.axp-progress-core b { width:34px; height:34px; display:grid; place-items:center; border-radius:9px; background:var(--navy); color:#fff; font:700 20px Georgia,serif; }
+.axp-progress-core small { color:#8fa0ad; font:8px Inter,sans-serif; letter-spacing:1px; }
+.axp-progress-node {
+  position:absolute;
+  width:33px;
+  height:33px;
+  display:grid;
+  place-items:center;
+  border:1px solid #e5ebf0;
+  border-radius:9px;
+  background:white;
+  box-shadow:0 3px 10px #24384b0b;
+}
+.axp-progress-node svg { width:16px; height:16px; color:#6e8ba4; }
+.axp-progress-node.node-one { top:0; left:calc(50% - 16px); }
+.axp-progress-node.node-two { right:0; bottom:28px; }
+.axp-progress-node.node-two svg { color:#8b78a9; }
+.axp-progress-node.node-three { left:0; bottom:28px; }
+.axp-progress-node.node-three svg { color:#6e927c; }
+.axp-progress-timeline {
+  position:relative;
+  width:min(850px,100%);
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:7px;
+  margin-top:2px;
+}
+.axp-progress-timeline::before {
+  content:"";
+  position:absolute;
+  top:14px;
+  inset-inline:7%;
+  height:1px;
+  background:#dfe7ed;
+}
+.axp-progress-step { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:9px; min-width:0; }
+.axp-progress-step > span {
+  width:29px;
+  height:29px;
+  display:grid;
+  place-items:center;
+  border:1px solid #e2e8ed;
+  border-radius:50%;
+  background:#f7f9fa;
+  color:#98a5b0;
+}
+.axp-progress-step > span svg { width:14px; height:14px; }
+.axp-progress-step small { max-width:130px; color:#91a0ac; font-size:9px; line-height:1.7; }
+.axp-progress-step.done > span { border-color:#d6e6db; background:#eff6f1; color:#5e8a6e; }
+.axp-progress-step.active > span { border-color:#d4e2ec; background:#edf4f8; color:#4f7898; box-shadow:0 0 0 4px #f6f9fb; }
+.axp-progress-step.active > span i { width:8px; height:8px; border-radius:50%; background:#5e8ba9; }
+.axp-progress-step.active small { color:#4f718e; font-weight:650; }
+.axp-progress-trust { display:flex; align-items:center; justify-content:center; gap:8px; max-width:760px; color:#6f8c79; font-size:10px; line-height:1.8; }
+.axp-progress-trust svg { width:16px; height:16px; flex:0 0 auto; }
+.axp-progress-demo-note { max-width:680px; margin:0; color:#a0aab3; font-size:9px; line-height:1.8; }
+.axp-progress-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin-top:3px; }
+@media (max-width: 850px) {
+  .axp-exam-summary { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .axp-exam-summary > div:nth-child(3) { border-inline-start:0; border-top:1px solid var(--line); }
+  .axp-exam-summary > div:nth-child(4) { border-top:1px solid var(--line); }
+  .axp-progress-shell { min-height:auto; padding:30px 8px; }
+  .axp-progress-timeline { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:18px; }
+  .axp-progress-timeline::before { display:none; }
+}
+@media (max-width: 580px) {
+  .axp-exam-summary > div { padding:11px 12px; }
+  .axp-exam-record { align-items:flex-start; flex-wrap:wrap; gap:8px; }
+  .axp-exam-record-copy { flex-basis:calc(100% - 52px); }
+  .axp-exam-record > .axp-pill { margin-inline-start:47px; }
+  .axp-progress-shell { gap:13px; padding:20px 2px; }
+  .axp-progress-shell > h1 { font-size:23px; }
+  .axp-progress-intro { font-size:10px; }
+  .axp-progress-summary { gap:7px; padding:7px 10px; font-size:8px; }
+  .axp-progress-visual { width:150px; height:150px; }
+  .axp-progress-node.node-two { bottom:20px; }
+  .axp-progress-node.node-three { bottom:20px; }
+  .axp-progress-timeline { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 7px; }
+  .axp-progress-step small { font-size:8px; }
+  .axp-progress-actions { width:100%; }
+  .axp-progress-actions .axp-btn { flex:1; white-space:normal; }
+}
