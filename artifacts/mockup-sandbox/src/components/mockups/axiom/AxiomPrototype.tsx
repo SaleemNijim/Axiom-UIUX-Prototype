@@ -10,7 +10,7 @@ import {
 import "./AxiomProfessorWorkspace.css";
 
 type Locale = "ar" | "en";
-type View = "dashboard" | "courses" | "course" | "materials" | "material" | "style" | "questions" | "generate" | "results" | "review" | "editor" | "history" | "exams" | "builder" | "finalize" | "export" | "settings";
+type View = "dashboard" | "courses" | "course" | "materials" | "material" | "style" | "questions" | "generate" | "progress" | "results" | "review" | "editor" | "history" | "exams" | "builder" | "finalize" | "export" | "settings";
 type QKind = "MCQ" | "Essay";
 type QStatus = "pending_review" | "approved" | "rejected";
 type EvidenceType = "PROSE" | "CODE" | "TABLE" | "MATH";
@@ -256,7 +256,7 @@ export function AxiomPrototype() {
       state: persistedCount === total ? "succeeded" : persistedCount > 0 ? "partially_succeeded" : "failed",
       requested: total, reserved: total, settled: persistedCount, released: total - persistedCount, slots,
     });
-    go("results");
+    go("progress");
   };
   const addExamQuestion = (item: Question) => {
     if (examState !== "Draft" || item.status !== "approved" || !eligible(item) || examItems.some(row => row.questionId === item.id)) return;
@@ -308,7 +308,7 @@ export function AxiomPrototype() {
   const pageTitle: Record<View, string> = {
     dashboard: t("الرئيسية", "Dashboard"), courses: t("كل المساقات", "All courses"), course: course.name,
     materials: t("المواد", "Materials"), material: material.name, style: t("بصمة الأسلوب", "Style Profile"),
-    questions: t("الأسئلة", "Questions"), generate: t("إعداد التوليد", "Generation setup"), results: t("نتائج التوليد", "Generation results"),
+    questions: t("الأسئلة", "Questions"), generate: t("إعداد التوليد", "Generation setup"), progress: t("مسار بناء الامتحان", "Generation progress"), results: t("نتائج التوليد", "Generation results"),
     review: t("مراجعة الأسئلة", "Question review"), editor: t("تحرير السؤال", "Question editor"), history: t("سجل الإصدارات", "Version history"),
     exams: t("الامتحانات", "Exams"), builder: t("منشئ الامتحان", "Exam Builder"), finalize: t("النسخة النهائية", "Finalized version"),
     export: t("التصدير", "Export"), settings: t("الحساب والإعدادات", "Account & settings"),
@@ -326,7 +326,7 @@ export function AxiomPrototype() {
     { id: "exams" as View, label: t("الامتحانات", "Exams"), icon: FileCheck2 },
     { id: "style" as View, label: t("بصمة الأسلوب", "Style Profile"), icon: Sparkles },
   ];
-  const isCourseView = ["course", "materials", "material", "style", "questions", "generate", "results", "review", "editor", "history", "exams", "builder", "finalize", "export"].includes(view);
+  const isCourseView = ["course", "materials", "material", "style", "questions", "generate", "progress", "results", "review", "editor", "history", "exams", "builder", "finalize", "export"].includes(view);
   const heading = (eyebrow: string, title: string, subtitle: string, right?: ReactNode) => <div className="axp-heading"><div><small>{eyebrow}</small><h1>{title}</h1><p>{subtitle}</p></div>{right}</div>;
   const SectionHeading = ({ icon, title, subtitle, right }: { icon: ReactNode; title: string; subtitle?: string; right?: ReactNode }) => <div className="axp-section-heading"><div className="axp-section-icon">{icon}</div><div><h2>{title}</h2>{subtitle && <small>{subtitle}</small>}</div>{right && <div className="axp-section-right">{right}</div>}</div>;
 
@@ -425,6 +425,32 @@ export function AxiomPrototype() {
     </aside></div>
   </>;
 
+  const renderProgress = () => {
+    const steps = [
+      t("تجهيز المادة", "Prepare material"),
+      t("استخراج المقاطع المناسبة", "Retrieve relevant passages"),
+      t("تطبيق بصمة الأستاذ", "Apply professor style"),
+      t("توليد الأسئلة", "Draft questions"),
+      t("فحص الاستشهادات", "Check citations"),
+      t("تجهيز المراجعة", "Prepare review"),
+    ];
+    return <section className="axp-progress-shell">
+      <div className="axp-progress-kicker"><span className="axp-brand-mark">A</span><span>{t("إعداد مسودة · نموذج توضيحي", "Draft preparation · visual demo")}</span><Pill tone="blue">{t("مسار توضيحي", "Illustrative flow")}</Pill></div>
+      <h1>{t("جاري بناء الامتحان", "Building the exam draft")}</h1>
+      <p className="axp-progress-intro">{t("تعرض هذه الشاشة مراحل تجهيز المسودة قبل انتقالك إلى مراجعة الأسئلة. لا يتم تشغيل نموذج ذكاء اصطناعي أو عملية خلفية حقيقية في هذا النموذج.", "This screen presents the stages that prepare a draft before you review its questions. No AI model or real background job is running in this prototype.")}</p>
+      <div className="axp-progress-summary"><span><Activity />{course.name}</span><i /><span>{scopeText || t("النطاق المحدد", "Selected scope")}</span><i /><b>{total} {t("سؤالاً", "questions")}</b></div>
+      <div className="axp-progress-visual" aria-hidden="true">
+        <span className="axp-progress-orbit orbit-one" /><span className="axp-progress-orbit orbit-two" />
+        <span className="axp-progress-core"><b>A</b><small>AXIOM</small></span>
+        <span className="axp-progress-node node-one"><FileText /></span><span className="axp-progress-node node-two"><Sparkles /></span><span className="axp-progress-node node-three"><ShieldCheck /></span>
+      </div>
+      <div className="axp-progress-timeline">{steps.map((step, index) => <div className={`axp-progress-step ${index < 3 ? "done" : index === 3 ? "active" : "upcoming"}`} key={step}><span>{index < 3 ? <Check /> : index === 3 ? <i /> : <b>{index + 1}</b>}</span><small>{step}</small></div>)}</div>
+      <div className="axp-progress-trust"><ShieldCheck /><span>{t("سيبقى كل سؤال مسودة بانتظار مراجعتك وقرارك؛ لا يعتمد Axiom أي سؤال تلقائياً.", "Every question remains a draft until your review and decision; Axiom never approves questions automatically.")}</span></div>
+      <p className="axp-progress-demo-note">{t("الحالة هنا تمثيل بصري للمراحل فقط، وليست مؤشراً حياً للتقدم أو دليلاً على تنفيذ التوليد.", "This is a visual representation of the stages only, not live progress or proof of a running generation job.")}</p>
+      <div className="axp-progress-actions">{btn(t("العودة إلى إعداد الامتحان", "Back to exam setup"), () => go("generate"))}{btn(t("الانتقال إلى نتائج المعاينة", "Continue to preview results"), () => go("results"), true, <ArrowLeft />)}</div>
+    </section>;
+  };
+
   const renderResults = () => {
     if (!result) return <div className="axp-empty"><Sparkles /><b>{t("لا توجد نتائج بعد", "No results yet")}</b>{btn(t("العودة إلى الإعداد", "Back to setup"), () => go("generate"))}</div>;
     return <>
@@ -450,15 +476,33 @@ export function AxiomPrototype() {
     if (!courseQuestions.length) return <>{heading(course.name, t("مراجعة الأسئلة", "Question review"), t("لا توجد أسئلة في هذا المقرر ضمن بيانات النموذج.", "There are no questions in this course fixture."))}<div className="axp-panel axp-empty"><BookOpen /><b>{t("لا توجد أسئلة للمراجعة.", "No questions to review.")}</b>{btn(t("إعداد طلب توليد", "Prepare a generation request"), () => go("generate"), true, <Sparkles />)}</div></>;
     return <>
     <div className="axp-review-heading"><div><small>{t("مراجعة بشرية مطلوبة", "Instructor review required")}</small><h1>{t("مراجعة الأسئلة", "Question review")}</h1><p>{course.name} · {courseQuestions.length} {t("أسئلة في بيانات العرض", "demo questions")}</p></div><div className="axp-heading-actions">{btn(t("قائمة الأسئلة", "Question list"), () => go("questions"))}{btn(t("اعتماد المؤهل فقط", "Approve eligible only"), bulkApprove, true, <Check />)}</div></div>
-    <div className="axp-review-workspace">
-      <aside className="axp-panel axp-review-list"><SectionHeading icon={<List />} title={t("قائمة الأسئلة", "Question list")} subtitle={`${courseQuestions.length} ${t("عينات تجريبية", "demo fixtures")}`} />{courseQuestions.map(item => <button className={`axp-review-item ${question.id === item.id ? "active" : ""}`} key={item.id} onClick={() => setSelectedQuestionId(item.id)}><span className="axp-question-index">{item.id.slice(-3)}</span><span><b>{versionOf(item).text}</b><small>{item.kind} · {statusText(item.status)}</small></span><span className="axp-review-dot" /></button>)}</aside>
-      <main className="axp-panel axp-question-main"><div className="axp-question-main-head"><div><Pill tone="blue">{question.kind}</Pill><Pill tone={statusTone(question.status)}>{statusText(question.status)}</Pill></div><span>{t("الإصدار", "Version")} {current.version}</span></div><h2>{current.text}</h2>
+    <div className="axp-review-workspace" dir="ltr">
+      <aside className="axp-panel axp-review-list" dir={dir}>
+        <SectionHeading icon={<List />} title={t("قائمة الأسئلة", "Question list")} subtitle={`${courseQuestions.length} ${t("سؤالاً في بيانات العرض", "demo questions")}`} />
+        <label className="axp-review-search"><Search /><input value={questionSearch} onChange={event => setQuestionSearch(event.target.value)} placeholder={t("ابحث في الأسئلة", "Search questions")} /></label>
+        <select className="axp-review-filter" aria-label={t("تصفية حالة السؤال", "Filter question status")} value={questionFilter} onChange={event => setQuestionFilter(event.target.value as "all" | QStatus)}>
+          <option value="all">{t("كل الحالات", "All statuses")}</option>
+          <option value="pending_review">{t("بانتظار المراجعة", "Pending review")}</option>
+          <option value="approved">{t("معتمد", "Approved")}</option>
+          <option value="rejected">{t("مرفوض", "Rejected")}</option>
+        </select>
+        <div className="axp-review-items">
+          {questionsFiltered.map(item => <button className={`axp-review-item ${question.id === item.id ? "active" : ""}`} key={item.id} onClick={() => setSelectedQuestionId(item.id)}>
+            <span className="axp-question-index">{item.id.slice(-3)}</span>
+            <span className="axp-review-item-copy"><b>{versionOf(item).text}</b><small>{item.kind} · {statusText(item.status)}</small></span>
+            <span className={`axp-review-dot ${item.status}`} aria-label={statusText(item.status)} />
+          </button>)}
+          {!questionsFiltered.length && <div className="axp-review-list-empty">{t("لا توجد أسئلة تطابق البحث أو الحالة المحددة.", "No questions match this search or status filter.")}</div>}
+        </div>
+        <p className="axp-review-list-note">{t("قرار المراجعة يبقى مستقلاً لكل سؤال؛ حالة السؤال لا تعني أن الدليل صحيح تلقائياً.", "Each question has its own review decision; question status does not imply valid evidence.")}</p>
+      </aside>
+      <main className="axp-panel axp-question-main" dir={dir}><div className="axp-question-main-head"><div><Pill tone="blue">{question.kind}</Pill><Pill tone={statusTone(question.status)}>{statusText(question.status)}</Pill></div><span>{t("الإصدار", "Version")} {current.version}</span></div><h2>{current.text}</h2>
         {question.kind === "MCQ" ? <div className="axp-option-list">{current.options.map((option, index) => <div className={`axp-option ${index === current.correct ? "correct" : ""}`} key={`${question.id}-${index}`}><span>{String.fromCharCode(65 + index)}</span><p>{option}</p>{index === current.correct && <Pill tone="green">{t("الإجابة المحددة", "Marked answer")}</Pill>}</div>)}</div> : <div className="axp-essay-preview"><b>{t("سؤال مقالي", "Essay prompt")}</b><p>{t("تُراجع الإجابة النموذجية والتفسير مع النص ومصدره.", "The model answer and explanation are reviewed with the question and its source.")}</p></div>}
         <div className="axp-question-metadata"><div><small>{t("الصعوبة المقترحة", "Suggested difficulty")}</small><b>{current.suggestedDifficulty}</b></div><div><small>{t("مراجعة يدوية", "Manual review")}</small><b>{question.manualReview ? t("مطلوبة", "Required") : t("غير مطلوبة", "Not required")}</b></div><div><small>{t("حالة السؤال", "Question state")}</small><b>{statusText(question.status)}</b></div><div><small>{t("أهلية الدليل", "Evidence eligibility")}</small><b>{eligible(question) ? t("مؤهل مبدئياً", "Eligible") : t("غير مؤهل", "Not eligible")}</b></div></div>
         <div className="axp-review-actions">{btn(question.status === "approved" ? t("معتمد", "Approved") : t("اعتماد السؤال", "Approve question"), () => approveQuestion(question), true, <Check />, question.status === "approved" || !eligible(question))}{btn(t("تعديل السؤال", "Edit question"), () => openEditor(question), false, <Pencil />)}{btn(t("رفض السؤال", "Reject question"), () => rejectQuestion(question), false, <X />, question.status === "rejected")}{btn(t("سجل الإصدارات", "Version history"), () => go("history"), false, <History />)}</div>
         {!eligible(question) && <p className="axp-blocked-note"><AlertCircle />{question.evidence.type !== "PROSE" ? t("هذا الدليل ليس PROSE؛ لذلك لا يدخل ضمن أهلية استرجاع Generation v1.", "This evidence is not PROSE, so it is outside Generation v1 retrieval eligibility.") : question.evidence.quality !== "verified" ? t("جودة الدليل ليست verified؛ الاعتماد الجماعي والفردي محجوب.", "Evidence quality is not verified; individual and bulk approval are blocked.") : t("مرجع المصدر لا يطابق موضعاً موجوداً في نسخة المادة.", "The source locator does not resolve to an existing location in the material version.")}</p>}
       </main>
-      <aside className="axp-panel axp-evidence-panel"><SectionHeading icon={<ShieldCheck />} title={t("أدلة المصدر", "Source evidence")} subtitle={t("مرجع المصدر ومعاينته", "Source locator and preview")} /><div className="axp-evidence-source"><b>{question.evidence.name}</b><small>{t("الإصدار", "Version")} {question.evidence.version}</small></div><div className="axp-evidence-grid"><div><small>{t("الصفحة", "Page")}</small><b>{question.evidence.page}</b></div><div><small>{t("مرجع المقطع", "Block locator")}</small><b dir="ltr">{question.evidence.block}</b></div><div><small>{t("نوع الدليل", "Evidence type")}</small><b>{question.evidence.type}</b></div><div><small>{t("جودة الدليل", "Evidence quality")}</small><b>{question.evidence.quality}</b></div></div><div className="axp-locator-status"><span>{t("سلامة المرجع", "Locator integrity")}</span><Pill tone={question.evidence.locatorExists ? "green" : "red"}>{question.evidence.locatorExists ? t("الموضع موجود", "Locator exists") : t("الموضع غير موجود", "Locator missing")}</Pill></div><div className="axp-passage"><small>{t("النص المستشهد به", "Cited passage")}</small><p>{question.evidence.text}</p></div><div className="axp-semantic-note"><b>{t("الدعم الدلالي", "Semantic support")}</b><p>{t("يُراجع معنى الاستشهاد منفصلاً عن وجود الصفحة/المقطع. لا تعرض هذه المعاينة تصنيفاً دلالياً أو نسبة غير معتمدة.", "Whether the passage supports the question is assessed separately from locator existence. This preview does not invent a semantic enum or confidence percentage.")}</p></div>{btn(t("فتح صفحة المصدر", "Open source page"), () => { const found = materials.find(item => item.id === question.evidence.materialId); if (found) { setSelectedMaterialId(found.id); setMaterialPage(question.evidence.page); go("material"); } }, false, <Eye />)}</aside>
+      <aside className="axp-panel axp-evidence-panel" dir={dir}><SectionHeading icon={<ShieldCheck />} title={t("أدلة المصدر", "Source evidence")} subtitle={t("مرجع المصدر ومعاينته", "Source locator and preview")} /><div className="axp-evidence-source"><b>{question.evidence.name}</b><small>{t("الإصدار", "Version")} {question.evidence.version}</small></div><div className="axp-evidence-grid"><div><small>{t("الصفحة", "Page")}</small><b>{question.evidence.page}</b></div><div><small>{t("مرجع المقطع", "Block locator")}</small><b dir="ltr">{question.evidence.block}</b></div><div><small>{t("نوع الدليل", "Evidence type")}</small><b>{question.evidence.type}</b></div><div><small>{t("جودة الدليل", "Evidence quality")}</small><b>{question.evidence.quality}</b></div></div><div className="axp-locator-status"><span>{t("سلامة المرجع", "Locator integrity")}</span><Pill tone={question.evidence.locatorExists ? "green" : "red"}>{question.evidence.locatorExists ? t("الموضع موجود", "Locator exists") : t("الموضع غير موجود", "Locator missing")}</Pill></div><div className="axp-passage"><small>{t("النص المستشهد به", "Cited passage")}</small><p>{question.evidence.text}</p></div><div className="axp-semantic-note"><b>{t("الدعم الدلالي", "Semantic support")}</b><p>{t("يُراجع معنى الاستشهاد منفصلاً عن وجود الصفحة/المقطع. لا تعرض هذه المعاينة تصنيفاً دلالياً أو نسبة غير معتمدة.", "Whether the passage supports the question is assessed separately from locator existence. This preview does not invent a semantic enum or confidence percentage.")}</p></div>{btn(t("فتح صفحة المصدر", "Open source page"), () => { const found = materials.find(item => item.id === question.evidence.materialId); if (found) { setSelectedMaterialId(found.id); setMaterialPage(question.evidence.page); go("material"); } }, false, <Eye />)}</aside>
     </div>
   </>;
   };
@@ -473,11 +517,39 @@ export function AxiomPrototype() {
     <section className="axp-panel"><div className="axp-history-head"><div><b>{question.id}</b><small>{question.kind} · {question.evidence.name}</small></div><Pill tone="blue">{question.versions.length} {t("إصدارات", "versions")}</Pill></div><div className="axp-version-timeline">{[...question.versions].reverse().map((version, index) => <article key={version.id}><span className="timeline-dot" /><div><b>v{version.version} {index === 0 ? t("الحالية", "Current") : ""}</b><small>{version.id}</small><p>{version.text}</p><span>{t("الصعوبة المقترحة", "Suggested difficulty")}: {version.suggestedDifficulty}</span></div></article>)}</div></section>
   </>;
 
-  const renderExams = () => <>
-    {heading(course.name, t("الامتحانات", "Exams"), t("مسودات الامتحانات والنسخ النهائية المحفوظة.", "Draft exams and immutable finalized snapshots."), btn(examState === "Draft" ? t("متابعة المسودة", "Continue draft") : t("إنشاء مراجعة جديدة", "Create new revision"), () => { if (examState === "Draft") go("builder"); else createNewRevision(); }, true, <Plus />))}
-    <section className="axp-panel"><SectionHeading icon={<FileCheck2 />} title={t("المسودة الحالية", "Current draft")} /><div className="axp-exam-list-row"><span><b>{examTitle}</b><small>{t("المراجعة", "Revision")} {revision} · {examItems.length} {t("أسئلة مختارة", "selected questions")}</small></span><Pill tone={examState === "Draft" ? "amber" : "green"}>{examState}</Pill>{btn(t("فتح المنشئ", "Open builder"), () => go(examState === "Draft" ? "builder" : "finalize"))}</div></section>
-    <section className="axp-panel"><SectionHeading icon={<History />} title={t("النسخ النهائية", "Finalized snapshots")} subtitle={t("كل Snapshot محفوظ مستقلاً ولا يتغير عند إنشاء مراجعة جديدة.", "Each snapshot is preserved independently and is not changed by a later revision.")} />{snapshots.map(snapshot => <div className="axp-exam-list-row" key={snapshot.number}><span><b>{snapshot.title}</b><small>v{snapshot.number} · {snapshot.items.length} {t("أسئلة", "questions")} · {snapshot.createdAt.slice(0, 10)}</small></span><Pill tone="green">{t("نهائي", "Finalized")}</Pill>{btn(t("عرض التصدير", "View exports"), () => go("export"))}</div>)}{!snapshots.length && <div className="axp-empty"><FileCheck2 />{t("لا توجد نسخ نهائية بعد.", "No finalized snapshots yet.")}</div>}</section>
-  </>;
+  const renderExams = () => {
+    const currentDraftCount = examState === "Draft" ? 1 : 0;
+    return <>
+      {heading(course.name, t("الامتحانات", "Exams"), t("مسودات الامتحانات والنسخ النهائية الخاصة بهذا المساق.", "Exam drafts and finalized versions for this course."), btn(examState === "Draft" ? t("إنشاء / متابعة امتحان", "Create / continue exam") : t("إنشاء مراجعة جديدة", "Create new revision"), () => { if (examState === "Draft") go("builder"); else createNewRevision(); }, true, <Plus />))}
+      <section className="axp-exam-summary" aria-label={t("ملخص سير عمل الامتحانات", "Exam workflow summary")}>
+        <div><small>{t("المسودات الحالية", "Current drafts")}</small><b>{currentDraftCount}</b><span>{t("مسودة قيد الإعداد", "Draft in preparation")}</span></div>
+        <div><small>{t("النسخ النهائية", "Finalized versions")}</small><b>{snapshots.length}</b><span>{t("لقطات محفوظة وغير قابلة للتغيير", "Preserved immutable snapshots")}</span></div>
+        <div><small>{t("أسئلة بانتظار قرارك", "Questions awaiting your decision")}</small><b>{pendingQuestions.length}</b><span>{t("تتطلب مراجعة بشرية", "Require instructor review")}</span></div>
+        <div><small>{t("أسئلة معتمدة متاحة", "Approved questions available")}</small><b>{approvedQuestions.length}</b><span>{t("صالحة للإضافة إلى مسودة", "Eligible to add to a draft")}</span></div>
+      </section>
+      <section className="axp-panel">
+        <SectionHeading icon={<FileCheck2 />} title={t("مسودة الامتحان", "Exam draft")} subtitle={t("الامتحان الحالي وسير العمل التالي.", "Current exam draft and its next step.")} />
+        <article className="axp-exam-record">
+          <span className="axp-exam-record-icon"><FileCheck2 /></span>
+          <div className="axp-exam-record-copy"><b>{examTitle}</b><small>{course.name} · {t("المراجعة", "Revision")} {revision} · {examItems.length} {t("أسئلة مختارة", "selected questions")}</small><small>{t("بيانات نموذج محلي؛ لا تمثل امتحانات حقيقية.", "Local demo state; not real exam records.")}</small></div>
+          <Pill tone={examState === "Draft" ? "amber" : "green"}>{examState === "Draft" ? t("مسودة", "Draft") : t("نهائي", "Finalized")}</Pill>
+          {btn(examState === "Draft" ? t("متابعة الإعداد", "Continue setup") : t("عرض النسخة النهائية", "View finalized version"), () => go(examState === "Draft" ? "builder" : "finalize"), false, <ArrowLeft />)}
+        </article>
+      </section>
+      <section className="axp-panel">
+        <SectionHeading icon={<History />} title={t("سجل النسخ النهائية", "Finalized versions")} subtitle={t("كل نسخة نهائية تحفظ أسئلتها وترتيبها وبياناتها كما كانت عند التثبيت.", "Each finalized version preserves its questions, order and composition as finalized.")} />
+        {snapshots.map(snapshot => <article className="axp-exam-record" key={snapshot.number}>
+          <span className="axp-exam-record-icon finalized"><LockKeyhole /></span>
+          <div className="axp-exam-record-copy"><b>{snapshot.title}</b><small>{course.name} · Snapshot v{snapshot.number} · Revision {snapshot.revision} · {snapshot.items.length} {t("أسئلة", "questions")}</small><small>{snapshot.createdAt.slice(0, 10)} · {t("نسخة ثابتة", "Immutable snapshot")}</small></div>
+          <Pill tone="green">{t("نهائي", "Finalized")}</Pill>
+          {btn(t("عرض التصدير", "View exports"), () => { setSelectedSnapshotNumber(snapshot.number); go("export"); }, false, <Download />)}
+        </article>)}
+        {!snapshots.length && <div className="axp-empty"><FileCheck2 /><b>{t("لا توجد نسخ نهائية بعد.", "No finalized snapshots yet.")}</b><p>{t("ستظهر هنا بعد اعتماد الأسئلة وتركيب المسودة وتثبيت نسخة الامتحان.", "Finalized versions appear here after composing a draft and finalizing it.")}</p></div>}
+        <p className="axp-exam-lifecycle-note">{t("دورة حياة الامتحان: Draft ← Finalized. التصدير حدث للملف وليس حالة جديدة للامتحان؛ إعادة التصدير لا تغيّر النسخة النهائية.", "Exam lifecycle: Draft → Finalized. Export is an artifact event, not a new exam state; re-exporting does not change the finalized version.")}</p>
+      </section>
+      {pendingQuestions.length > 0 && <section className="axp-panel axp-exam-next-review"><SectionHeading icon={<ShieldCheck />} title={t("توجد أسئلة تنتظر قرارك", "Questions need your decision")} subtitle={t("لا ينتقل أي سؤال إلى منشئ الامتحان قبل اعتمادك له.", "No question enters the exam builder before your approval.")} right={btn(t("فتح مساحة مراجعة الأسئلة", "Open question review"), () => go("questions"), true, <BookOpen />)} /></section>}
+    </>;
+  };
 
   const renderBuilder = () => <>
     {heading(course.name, t("منشئ الامتحان", "Exam Builder"), t("اختر الأسئلة المعتمدة، رتّبها، وثبّت نسخة السؤال المختارة.", "Select approved questions, arrange them and pin the selected question versions."), <Pill tone="amber">Draft · Revision {revision}</Pill>)}
@@ -519,6 +591,7 @@ export function AxiomPrototype() {
       case "style": return renderStyle();
       case "questions": return renderQuestions();
       case "generate": return renderGenerate();
+      case "progress": return renderProgress();
       case "results": return renderResults();
       case "review": return renderReview();
       case "editor": return renderEditor();
@@ -537,7 +610,7 @@ export function AxiomPrototype() {
       <div className="axp-brand"><span className="axp-brand-mark">A</span><div><b>Axiom</b><small>{t("مساحة الأستاذ", "Professor Workspace")}</small></div></div>
       <div className="axp-sidebar-section"><small>{t("مساحة العمل", "Workspace")}</small>{globalNav.map(item => { const Icon = item.icon; return <button key={item.id} className={view === item.id ? "active" : ""} onClick={() => go(item.id)}><Icon /><span>{item.label}</span></button>; })}</div>
       <div className="axp-current-course"><small>{t("المساق الحالي", "Current course")}</small><button onClick={() => go("course")}><span className="axp-course-mini"><GraduationCap /></span><span><b>{course.name}</b><em>{course.department}</em></span><ChevronDown /></button></div>
-      <div className="axp-sidebar-section course-nav"><small>{t("مساحة المساق", "Course workspace")}</small>{courseNav.map(item => { const Icon = item.icon; return <button key={item.id} className={view === item.id || (item.id === "questions" && ["review", "editor", "history"].includes(view)) || (item.id === "exams" && ["builder", "finalize", "export"].includes(view)) || (item.id === "materials" && view === "material") ? "active" : ""} onClick={() => go(item.id)}><Icon /><span>{item.label}</span>{item.id === "questions" && pendingQuestions.length > 0 && <i className="axp-nav-count">{pendingQuestions.length}</i>}</button>; })}</div>
+      <div className="axp-sidebar-section course-nav"><small>{t("مساحة المساق", "Course workspace")}</small>{courseNav.map(item => { const Icon = item.icon; return <button key={item.id} className={view === item.id || (item.id === "questions" && ["review", "editor", "history"].includes(view)) || (item.id === "exams" && ["generate", "progress", "results", "builder", "finalize", "export"].includes(view)) || (item.id === "materials" && view === "material") ? "active" : ""} onClick={() => go(item.id)}><Icon /><span>{item.label}</span>{item.id === "questions" && pendingQuestions.length > 0 && <i className="axp-nav-count">{pendingQuestions.length}</i>}</button>; })}</div>
       <div className="axp-sidebar-foot"><div className="axp-profile"><span>س</span><div><b>د. سلمى أحمد</b><small>{t("مالك المقرر · الخطة الشخصية", "Course owner · Personal Plan")}</small></div><MoreHorizontal /></div><p>{t("بيانات تجريبية · لا يوجد اتصال إنتاجي", "Demo data · no production connection")}</p></div>
     </aside>
     {mobileOpen && <button className="axp-mobile-scrim" aria-label={t("إغلاق القائمة", "Close navigation")} onClick={() => setMobileOpen(false)} />}
