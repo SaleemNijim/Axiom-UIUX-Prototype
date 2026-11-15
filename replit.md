@@ -1,45 +1,54 @@
-# [Project name]
+# Axiom UI/UX Prototype
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+This repository is a design and interaction prototype workspace for Axiom. The professor-facing mockup lives in `artifacts/mockup-sandbox/`. It is **not** the Axiom production application.
 
-## Run & Operate
+## Source of truth
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Professor UX: `DOCS_ROOT/04-DESIGN/Professor-Workspace-UI-Spec.md`
+- Accepted decisions: ADR-034 through ADR-041
+- Generation/review/exam contracts: M6, M7 and M8
+- Prototype work instructions: `.conversation/AXIOM-UI-PROTOTYPE-PROMPT.md`
 
-## Stack
+The current prompt replaces its previous single-`index.html` and pre-ADR-035…041 instructions. Follow the current prompt and source documents; archived reconciliation notes are historical only.
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+## Run locally
 
-## Where things live
+Use Node.js 22+ and pnpm 10. The mockup Vite configuration requires `PORT` and `BASE_PATH`.
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+PowerShell:
 
-## Architecture decisions
+```powershell
+pnpm install --frozen-lockfile
+$env:PORT = "5000"
+$env:BASE_PATH = "/"
+pnpm --filter @workspace/mockup-sandbox run dev
+```
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+Bash:
 
-## Product
+```bash
+pnpm install --frozen-lockfile
+PORT=5000 BASE_PATH=/ pnpm --filter @workspace/mockup-sandbox run dev
+```
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+## Checks
 
-## User preferences
+```bash
+pnpm --filter @workspace/mockup-sandbox run typecheck
+node artifacts/mockup-sandbox/scripts/check-contract.mjs
+PORT=5000 BASE_PATH=/ pnpm --filter @workspace/mockup-sandbox run build
+```
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+## Where the professor prototype lives
 
-## Gotchas
+- Main screen component: `artifacts/mockup-sandbox/src/components/mockups/axiom/AxiomPrototype.tsx`
+- Professor prototype styles: `artifacts/mockup-sandbox/src/components/mockups/axiom/AxiomProfessorWorkspace.css`
+- Existing preview module registry: `artifacts/mockup-sandbox/src/.generated/mockup-components.ts`
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+## Non-negotiable boundaries
 
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- Preserve the existing React/Vite mockup workspace; do not replace it with a standalone HTML file or a second professor app.
+- Use static/demo data and local-only interactions. Do not add production APIs, database, auth, uploads, AI calls, OCR, quota settlement, or real export generation.
+- Do not add Short Answer, professor difficulty input, citations-off switches, fake confidence values, or an instructor Retry control after terminal generation failure.
+- Keep SuperAdmin separate. Do not modify frozen architecture documents, accepted ADRs, Roadmap, milestones, production agents/prompts, or execution-state files as part of prototype UX work.
+- Production application implementation remains unauthorized until the owner explicitly authorizes M0-P1.
